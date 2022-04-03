@@ -1,0 +1,40 @@
+package com.SAIAFarm.SAIAFarm.Utils;
+
+
+
+import java.io.IOException;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public enum AppProperties {
+    INSTANCE;
+
+    private final Properties properties;
+
+    AppProperties() {
+        properties = new Properties();
+        try {
+            properties.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
+        } catch (IOException e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
+
+    public String getMysqlDriver(){
+        return properties.getProperty("mysql.driver-class-name");
+    }
+    public String getMysqlUrl() {
+        System.out.println("Url: "+properties.getProperty("mysql.url"));
+        return properties.getProperty("mysql.url");
+    }
+    public String getMysqlUsername() {
+        System.out.println("All : "+properties.propertyNames());
+        return properties.getProperty("mysql.username");
+    }
+    public String getMysqlPassword() {
+        return properties.getProperty("mysql.password");
+    }
+}
+
+
