@@ -1,10 +1,9 @@
 package com.Irrigation.SAIAFarming.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.vividsolutions.jts.geom.Geometry;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.awt.*;
 import java.io.Serializable;
 
 @Entity
@@ -42,16 +41,13 @@ public class FarmerDatabase implements Serializable {
     private String village;
 
     //@NotNull
-    @Column(name = "farmer_address_coordinates",columnDefinition = "Geometry")
-    private com.vividsolutions.jts.geom.Geometry farmer_address_coordinates;
+    @Column(name = "farmer_address_coordinates")
+    private Point farmer_address_coordinates;
 
     @Column(name = "address_landmark")
     private String address_landmark;
 
     public FarmerDatabase() {
-    }
-
-    public FarmerDatabase(String head_name, String gender, String son_wife_daughter, String literacy, String village, String address_landmark, Geometry farmer_address_coordinates) {
     }
 
     public int getFarmer_id() {
@@ -102,11 +98,11 @@ public class FarmerDatabase implements Serializable {
         this.village = village;
     }
 
-    public com.vividsolutions.jts.geom.Geometry getFarmer_address_coordinates() {
+    public Point getFarmer_address_coordinates() {
         return farmer_address_coordinates;
     }
 
-    public void setFarmer_address_coordinates(com.vividsolutions.jts.geom.Geometry farmer_address_coordinates) {
+    public void setFarmer_address_coordinates(Point farmer_address_coordinates) {
         this.farmer_address_coordinates = farmer_address_coordinates;
     }
 
@@ -118,8 +114,7 @@ public class FarmerDatabase implements Serializable {
         this.address_landmark = address_landmark;
     }
 
-    public FarmerDatabase(int farmer_id, String head_name, String gender, String son_wife_daughter, String literacy, String village, Geometry farmer_address_coordinates, String address_landmark, FarmDatabase farmDatabase) {
-        this.farmer_id = farmer_id;
+    public FarmerDatabase(String head_name, String gender, String son_wife_daughter, String literacy, String village, Point farmer_address_coordinates, String address_landmark) {
         this.head_name = head_name;
         this.gender = gender;
         this.son_wife_daughter = son_wife_daughter;
@@ -127,7 +122,6 @@ public class FarmerDatabase implements Serializable {
         this.village = village;
         this.farmer_address_coordinates = farmer_address_coordinates;
         this.address_landmark = address_landmark;
-        this.farmDatabase = farmDatabase;
     }
 
     @OneToOne( mappedBy = "farmerDatabase", cascade = CascadeType.ALL)

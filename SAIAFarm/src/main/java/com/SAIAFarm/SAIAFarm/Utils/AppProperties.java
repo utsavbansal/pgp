@@ -27,13 +27,18 @@ public enum AppProperties {
     public String getMysqlUrl() {
         System.out.println("Url: "+properties.getProperty("mysql.url"));
         return properties.getProperty("mysql.url");
+//        System.out.println("Url: "+properties.getProperty("spring.datasource.url"));
+//        return properties.getProperty("spring.datasource.url");
     }
     public String getMysqlUsername() {
         System.out.println("All : "+properties.propertyNames());
         return properties.getProperty("mysql.username");
+//        System.out.println("All : "+properties.propertyNames());
+//        return properties.getProperty("spring.datasource.username");
     }
     public String getMysqlPassword() {
         return properties.getProperty("mysql.password");
+//        return properties.getProperty("spring.datasource.password");
     }
 }
 

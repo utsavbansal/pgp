@@ -8,7 +8,6 @@ import com.Irrigation.SAIAFarming.model.ResponseStatus;
 import com.Irrigation.SAIAFarming.model.SAIAFarm;
 //import com.Irrigation.SAIAFarming.model.SAIAFarmer;
 import com.Irrigation.SAIAFarming.repository.FarmDatabaseRepository;
-import com.Irrigation.SAIAFarming.utils.RequestContext;
 import com.Irrigation.SAIAFarming.utils.ResponseCode;
 import com.SAIAFarm.SAIAFarm.ClientSaiaFarmApplication;
 import com.SAIAFarm.SAIAFarm.Response.SaiaFarmData;
@@ -94,10 +93,6 @@ public class FarmController extends BaseController {
             //System.out.println(date);
             //IrrigationDBClient dao = new IrrigationDBClient();
             //dao.readDataBase();
-            if (isEmpty(farmsizecategory)) {
-                logger.warn("Invalid request param `user`: " + farmsizecategory);
-                throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_FARM_CATEGORY);
-            }
             if (isEmpty(farmsizecategory)) {
                 logger.warn("Invalid request param `user`: " + farmsizecategory);
                 throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_FARM_CATEGORY);

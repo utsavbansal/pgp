@@ -1,31 +1,25 @@
-package com.SAIAFarm.SAIAFarm.Response;
+package com.Irrigation.SAIAFarming.model;
 
-import com.vividsolutions.jts.geom.Geometry;
-
-public class SaiaFarmerData {
+public class SAIAFarmer {
     String head_name  ;
-    String gender ;
+    String gender;
     String son_wife_daughter ;
     String literacy ;
     String village ;
-    String address_landmark;
-    String farmer_address_coordinates;
+    String farmer_address_coordinates ;
+    String address_landmark ;
 
+    public SAIAFarmer() {
+    }
 
-    public SaiaFarmerData(String head_name, String gender, String son_wife_daughter, String literacy, String village, String address_landmark, String farmer_address_coordinates) {
+    public SAIAFarmer(String head_name, String gender, String son_wife_daughter, String literacy, String village, String farmer_address_coordinates, String address_landmark) {
         this.head_name = head_name;
         this.gender = gender;
         this.son_wife_daughter = son_wife_daughter;
         this.literacy = literacy;
         this.village = village;
-        this.address_landmark = address_landmark;
         this.farmer_address_coordinates = farmer_address_coordinates;
-    }
-
-    public SaiaFarmerData() {
-    }
-
-    public SaiaFarmerData(int farmer_id) {
+        this.address_landmark =address_landmark;
     }
 
     public String getHead_name() {

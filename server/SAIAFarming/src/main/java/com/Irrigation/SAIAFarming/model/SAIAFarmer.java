@@ -1,25 +1,31 @@
 package com.Irrigation.SAIAFarming.model;
 
+import com.vividsolutions.jts.geom.Geometry;
+
+import java.awt.*;
+
 public class SAIAFarmer {
+    String user_id;
     String head_name  ;
     String gender;
     String son_wife_daughter ;
     String literacy ;
     String village ;
-    String farmer_address_coordinates ;
+    Geometry farmer_address_coordinates ;
     String address_landmark ;
 
     public SAIAFarmer() {
     }
 
-    public SAIAFarmer(String head_name, String gender, String son_wife_daughter, String literacy, String village, String farmer_address_coordinates, String address_landmark) {
+    public SAIAFarmer(String user_id, String head_name, String gender, String son_wife_daughter, String literacy, String village, Geometry farmer_address_coordinates, String address_landmark) {
+        this.user_id = user_id;
         this.head_name = head_name;
         this.gender = gender;
         this.son_wife_daughter = son_wife_daughter;
         this.literacy = literacy;
         this.village = village;
         this.farmer_address_coordinates = farmer_address_coordinates;
-        this.address_landmark =address_landmark;
+        this.address_landmark = address_landmark;
     }
 
     public String getHead_name() {
@@ -62,11 +68,11 @@ public class SAIAFarmer {
         this.village = village;
     }
 
-    public String getFarmer_address_coordinates() {
+    public Geometry getFarmer_address_coordinates() {
         return farmer_address_coordinates;
     }
 
-    public void setFarmer_address_coordinates(String farmer_address_coordinates) {
+    public void setFarmer_address_coordinates(Geometry farmer_address_coordinates) {
         this.farmer_address_coordinates = farmer_address_coordinates;
     }
 
@@ -76,5 +82,13 @@ public class SAIAFarmer {
 
     public void setAddress_landmark(String address_landmark) {
         this.address_landmark = address_landmark;
+    }
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 }

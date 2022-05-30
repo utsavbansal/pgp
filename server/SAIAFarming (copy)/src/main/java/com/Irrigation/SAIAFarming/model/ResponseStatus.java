@@ -6,7 +6,7 @@ import java.util.HashMap;
 @XmlRootElement (name="status")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(propOrder = {"req_id", "http_code", "status_code", "message"})
-public class ResponseData {
+public class ResponseStatus {
     @XmlElement(name = "req_id")
     private String reqId;
 
@@ -19,28 +19,17 @@ public class ResponseData {
     @XmlElement(name = "message")
     private String msg;
 
-    @XmlElement(name = "data")
-    public HashMap<String, Object> data = null;
 
-
-    public ResponseData() {}
+    public ResponseStatus() {}
 
 
 
-    public ResponseData(String reqId, int httpCode, int statusCode, String text)
+    public ResponseStatus(String reqId, int httpCode, int statusCode, String text)
     {
         this.reqId = reqId;
         this.httpCode = httpCode;
         this.statusCode = statusCode;
         this.msg = text;
-    }
-
-    public ResponseData(String reqId, int httpCode, int statusCode, HashMap<String, Object> data)
-    {
-        this.reqId = reqId;
-        this.httpCode = httpCode;
-        this.statusCode = statusCode;
-        this.data = data;
     }
 
 
@@ -77,23 +66,4 @@ public class ResponseData {
         this.msg = msg;
     }
 
-    public HashMap<String, Object> getData() {
-        return data;
-    }
-
-    public void setData(HashMap<String, Object> data) {
-        this.data = data;
-    }
-    public String toString(boolean withoutData) {
-        if (withoutData) {
-            return "ResponseData{" +
-                    "req_id='" + reqId + '\'' +
-
-                    ", http_code=" + httpCode +
-                    ", status_code=" + statusCode +
-                    '}';
-        } else {
-            return toString();
-        }
-    }
 }

@@ -84,16 +84,4 @@ public class ResponseData {
     public void setData(HashMap<String, Object> data) {
         this.data = data;
     }
-    public String toString(boolean withoutData) {
-        if (withoutData) {
-            return "ResponseData{" +
-                    "req_id='" + reqId + '\'' +
-
-                    ", http_code=" + httpCode +
-                    ", status_code=" + statusCode +
-                    '}';
-        } else {
-            return toString();
-        }
-    }
 }

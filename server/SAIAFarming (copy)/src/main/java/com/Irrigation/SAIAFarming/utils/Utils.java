@@ -9,8 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public final class Utils {
-
-    public static  int USER_ID_NAME_CHRACTERS = 4;
     private static ClientSaiaFarmApplication saiafarmAPI = ClientSaiaFarmApplication.getInstance();
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private Date validateDateParam(String datestr) {
