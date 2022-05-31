@@ -354,10 +354,10 @@ public class FarmerController extends BaseController {
 
 
     @POST
-    @Path("/coordinates/data")
+    @Path("/post_farmerdata")
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
-    @SampleRequest("http://localhost:9099/api/coordinates/data")
+    @SampleRequest("http://localhost:9099/api/post_farmerdata")
     public ResponseData PostMsqlData(@RequestBody Feature feature) throws Exception {
 
         final String reqID = UUID.randomUUID().toString();
