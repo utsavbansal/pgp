@@ -2,7 +2,6 @@ package com.Irrigation.SAIAFarming.controller;
 
 import com.Irrigation.SAIAFarming.SampleRequest;
 import com.Irrigation.SAIAFarming.entity.FarmDatabase;
-import com.Irrigation.SAIAFarming.exception.RESTException;
 import com.Irrigation.SAIAFarming.model.ResponseData;
 import com.Irrigation.SAIAFarming.model.ResponseStatus;
 import com.Irrigation.SAIAFarming.model.SAIAFarm;
@@ -25,7 +24,8 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
-import static org.apache.logging.log4j.util.Strings.isEmpty;
+import static org.aspectj.util.LangUtil.isEmpty;
+
 
 @RestController
 @Path("/api")
@@ -77,7 +77,7 @@ public class FarmController extends BaseController {
         RequestContext.add("reqID", reqID);
 
         //final MediaType mediaType = request.selectVariant(mtVariantList).getMediaType();
-        try{
+
 
             /*FarmerDatabase farmm = new FarmerDatabase();
             farmm.setFarmer_id(1);*/
@@ -96,11 +96,11 @@ public class FarmController extends BaseController {
             //dao.readDataBase();
             if (isEmpty(farmsizecategory)) {
                 logger.warn("Invalid request param `user`: " + farmsizecategory);
-                throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_FARM_CATEGORY);
+
             }
             if (isEmpty(farmsizecategory)) {
                 logger.warn("Invalid request param `user`: " + farmsizecategory);
-                throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_FARM_CATEGORY);
+
             }
             ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
             /// SAIAFarmer farmerData = new SAIAFarmer(head_name,gender, son_wife_daughter, literacy, village, farmer_address_coordinates, address_landmark);
@@ -116,19 +116,8 @@ public class FarmController extends BaseController {
             ResponseData resData = new ResponseData(reqID, ResponseCode.SUCCESS.getCode(), Response.Status.OK.getStatusCode(), retData);
 
             return resData;
-        }
-        catch (RESTException re) {
-            logger.error("REST Exception:" + re.getMessage(), re);
-            throw re;
-        } catch (Exception e) {
-            RequestContext.clear();
-            logger.error("Internal Error. Reason:" + e.getMessage(), e);
-            final ResponseStatus status = new ResponseStatus(reqID, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                    ResponseCode.SERVER_INTERNAL_SERVER_ERROR.getCode(),
-                    ResponseCode.SERVER_INTERNAL_SERVER_ERROR.getText());
-            throw new RESTException(Response.Status.INTERNAL_SERVER_ERROR,MediaType.APPLICATION_JSON.toString(), status);
-        }
-        //return  status;
+
+
 
     }
 
@@ -145,17 +134,17 @@ public class FarmController extends BaseController {
 
         if(isEmpty(String.valueOf(farm_id))){
             logger.warn("Invalid request param `farm_id`: " + farm_id);
-            throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_FARM_ID);
+            //throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_FARM_ID);
         }
-        try{
+
             //get the farm data from DB using farm_id, if farm_id is not present then gives error
             HashMap<String, Object> retData =new LinkedHashMap<>();
             //Optional<FarmDatabase> farmInfo = saiaFarmRepository.findById(farm_id);
-            FarmDatabase farmInfo = saiaFarmRepository.findById(farm_id).get();
+            FarmDatabase farmInfo = saiaFarmRepository.findOne(farm_id);
             FarmDatabase farDetail = new FarmDatabase(farmInfo.getFarm_id(), farmInfo.getFarm_name(), farmInfo.getFarm_coordinates(), farmInfo.getFarmsizecategory(), farmInfo.getFarm_type(), farmInfo.getFarm_size());
             //FarmDatabase farmInfo = saiaFarmRepository.findById(String.valueOf(farm_id)).get();
             if (farmInfo.equals(Optional.empty())){
-                throwErrorException(Response.Status.UNAUTHORIZED, ResponseCode.CLIENT_INVALID_REQ_PARAM_FARM_ID);
+                //throwErrorException(Response.Status.UNAUTHORIZED, ResponseCode.CLIENT_INVALID_REQ_PARAM_FARM_ID);
             }
             //Here we have to filter the data (use only desired fields)
 
@@ -166,19 +155,8 @@ public class FarmController extends BaseController {
 
             return responseData;
 
-        }
-        catch (RESTException re){
-            logger.error("Rest Exception: " + re.getMessage(), re);
-            throw re;
-        }
-        catch (Exception e)
-        {
-            RequestContext.clear();
-            logger.error("Internal Error" + e.getMessage(), e);
-            final ResponseStatus status = new ResponseStatus(reqID, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                    ResponseCode.SERVER_INTERNAL_SERVER_ERROR.getCode(),
-                    ResponseCode.SERVER_INTERNAL_SERVER_ERROR.getText());
-            throw new RESTException(Response.Status.INTERNAL_SERVER_ERROR, status);
-        }
+
+
+
     }
 }

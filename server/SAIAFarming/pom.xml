@@ -5,8 +5,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.3</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>1.5.9.RELEASE</version>
+
 	</parent>
 	<groupId>com.Irrigation</groupId>
 	<artifactId>SAIAFarming</artifactId>
@@ -15,12 +15,35 @@
 	<description>SAIAFarm Serverside</description>
 	<properties>
 		<java.version>1.8</java.version>
+		<hibernate.version>5.2.12.Final</hibernate.version>
+
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-jpamodelgen</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-autoconfigure -->
+		<!--<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<version>2.7.0</version>
+		</dependency>-->
+		<!--<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<version>2.2.4.RELEASE</version>
+		</dependency>-->
+		<!--<dependency>
+			<groupId>org.springframework.boot.web.servlet.error.ErrorController</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<version>2.7.0</version>
+		</dependency>-->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -49,10 +72,10 @@
                                  the one you are currently using -->
 		</dependency>
 
-		<dependency>
+		<!--<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jersey</artifactId>
-		</dependency>
+		</dependency>-->
 
 		<dependency>
 		<groupId>com.SAIAFarm</groupId>
@@ -110,6 +133,26 @@
 			<artifactId>gt-geojsondatastore</artifactId>
 			<version>25.3.01</version>
 		</dependency>-->
+
+		<!--<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<version>2.7.0</version>
+		</dependency>
+		&lt;!&ndash; Thanks for using https://jar-download.com &ndash;&gt;-->
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-autoconfigure -->
+		<!--<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<version>2.3.12.RELEASE</version>
+		</dependency>-->
+		<!-- add the junit dependency here -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.7.0</version>
+			<scope>test</scope>
+		</dependency>
 
 
 

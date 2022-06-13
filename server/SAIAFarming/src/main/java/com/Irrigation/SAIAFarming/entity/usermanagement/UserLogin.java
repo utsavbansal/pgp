@@ -3,11 +3,11 @@ package com.Irrigation.SAIAFarming.entity.usermanagement;
 import javax.xml.bind.annotation.XmlElement;
 
 public class UserLogin {
-    @XmlElement(name = "user_id")
-    private String userid;
+    //@XmlElement(name = "user_id")
+    public String userid;
 
-    @XmlElement(name = "password")
-    private String password;
+    //@XmlElement(name = "password")
+    public String password;
 
     public String getUserid() {
         return userid;
@@ -30,4 +30,6 @@ public class UserLogin {
         this.password = password;
     }
 
+    public UserLogin() {
+    }
 }

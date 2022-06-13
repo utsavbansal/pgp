@@ -12,7 +12,7 @@ public enum ResponseCode {
     CLIENT_INVALID_REQ_PARAM_RELATION(1015,"Invalid_Relation"),
     CLIENT_INVALID_REQ_PARAM_LITERACY(1016,"Invalid_education"),
     CLIENT_INVALID_REQ_PARAM_VILLAGE_NAME(1017,"Invalid_vilage_name"),
-    CLIENT_INVALID_REQ_PARAM_ADDRESS_COORDINATES(1018,"Invalid_Address_Coordinates"),
+    CLIENT_INVALID_REQ_PARAM_ADDRESS_COORDINATES(1018,"Invalid_Address_Coordinates/Please provide coordinates"),
     CLIENT_INVALID_REQ_PARAM_MOBILE_NUM(1019,"Invalid_Mobile_Number"),
     CLIENT_INVALID_REQ_PARAM_USER_TYPE(1020,"Invalid_User_Type"),
     CLIENT_INVALID_REQ_PARAM_USERID_PASSWORD(1034,"Invalid_username_or_password"),
@@ -23,7 +23,7 @@ public enum ResponseCode {
     CLIENT_INVALID_REQ_PARAM_FARM_CATEGORY(0000,"Invalid farm size category"),
     CLIENT_INVALID_REQ_PARAM_FARM_ID(0000,"Invalid farm Id"),
 
-    CLIENT_USER_MOBILE_EXISTING(1020, "Mobile_Number_already_In_Use,_please_register_with_different_Mobile_number");
+    CLIENT_USER_MOBILE_EXISTING(1020, "Mobile_Number_already_In_Use_please_register_with_different_Mobile_number");
 
     int code;
     String text;

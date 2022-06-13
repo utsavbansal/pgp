@@ -4,7 +4,6 @@ import com.Irrigation.SAIAFarming.utils.Utils;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;

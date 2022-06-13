@@ -6,9 +6,8 @@ package com.Irrigation.SAIAFarming.controller;
 
 import com.Irrigation.SAIAFarming.SampleRequest;
 //import com.Irrigation.SAIAFarming.entity.UserDatabase;
-import com.Irrigation.SAIAFarming.entity.FarmerDatabase;
 import com.Irrigation.SAIAFarming.entity.usermanagement.UserRegistration;
-import com.Irrigation.SAIAFarming.exception.RESTException;
+import com.Irrigation.SAIAFarming.exception.CustomApplicationException;
 import com.Irrigation.SAIAFarming.model.*;
 import com.Irrigation.SAIAFarming.model.ResponseStatus;
 import com.Irrigation.SAIAFarming.repository.FarmerDatabaseRepository;
@@ -17,8 +16,8 @@ import com.Irrigation.SAIAFarming.utils.RequestContext;
 import com.Irrigation.SAIAFarming.utils.ResponseCode;
 import com.SAIAFarm.SAIAFarm.ClientSaiaFarmApplication;
 import com.SAIAFarm.SAIAFarm.Response.SaiaFarmerData;
-import com.vividsolutions.jts.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.*;
@@ -33,9 +32,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wololo.geojson.Feature;
 
-import com.vividsolutions.jts.geom.Geometry;
-
-import static org.apache.logging.log4j.util.Strings.isEmpty;
+//import static org.apache.logging.log4j.util.Strings.isEmpty;
+import static org.aspectj.util.LangUtil.isEmpty;
 //import static com.Irrigation.SAIAFarming.controller.BaseController.mtVariantList;
 
 @RestController
@@ -75,7 +73,7 @@ public class FarmerController extends BaseController {
         RequestContext.add("reqID", reqID);
 
         //final MediaType mediaType = request.selectVariant(mtVariantList).getMediaType();
-        try {
+
 
             String user = comment.getUser();
             String email = comment.getEmail();
@@ -83,13 +81,13 @@ public class FarmerController extends BaseController {
             String datestr = comment.getDate();
             String summary = comment.getSummary();
             String commentVal = comment.getComment();
-            Date date = validateDateParam("s_date", datestr, ResponseCode.CLIENT_INVALID_REQ_PARAM_DATE);
-            System.out.println(date);
+            //Date date = validateDateParam("s_date", datestr, ResponseCode.CLIENT_INVALID_REQ_PARAM_DATE);
+            //System.out.println(date);
             //IrrigationDBClient dao = new IrrigationDBClient();
             //dao.readDataBase();
             if (isEmpty(user)) {
                 logger.warn("Invalid request param `user`: " + user);
-                throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_USER_NAME);
+               // throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_USER_NAME);
             }
             CommentModel commentData = new CommentModel(user, email, website, datestr, summary, commentVal);
             LinkedHashMap<String, Object> retData = new LinkedHashMap<>();
@@ -105,26 +103,14 @@ public class FarmerController extends BaseController {
 
             //String something = new String(String.valueOf(dao.Comment()));
             return resData;
-        } catch (RESTException re) {
-            logger.error("REST Exception:" + re.getMessage(), re);
-            throw re;
-        } catch (Exception e) {
-            RequestContext.clear();
-            logger.error("Internal Error. Reason:" + e.getMessage(), e);
-            final ResponseStatus status = new ResponseStatus(reqID, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                    ResponseCode.SERVER_INTERNAL_SERVER_ERROR.getCode(),
-                    ResponseCode.SERVER_INTERNAL_SERVER_ERROR.getText());
-            throw new RESTException(Response.Status.INTERNAL_SERVER_ERROR, MediaType.APPLICATION_JSON.toString(), status);
-        }
-        //return  status;
+
+
 
     }
 
 
-    @GET
-    @Path("/get_farmersdata")
-    @Produces({MediaType.APPLICATION_JSON})
-    @SampleRequest("http://localhost:9099/api/get_farmersdata")
+    @GetMapping("/get_farmersdata")
+
     public ArrayList<SAIAFarmer> StringData() throws Exception {
 
         System.out.println("I am here 1");
@@ -181,10 +167,8 @@ public class FarmerController extends BaseController {
     }*/
 
 
-    @GET
-    @Path("/farmerdata")
-    @Produces({MediaType.APPLICATION_JSON})
-    @SampleRequest("http://localhost:9099/api/farmerdata")
+    @GetMapping("/farmerdata")
+
     public ArrayList<SAIAFarmer> getfarmer(@QueryParam(value = "farmer_id") int farmer_id) throws SQLException, ClassNotFoundException {
 
         ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
@@ -353,11 +337,8 @@ public class FarmerController extends BaseController {
     }*/
 
 
-    @POST
-    @Path("/post_farmerdata")
-    @Produces({MediaType.APPLICATION_JSON})
-    @Consumes({MediaType.APPLICATION_JSON})
-    @SampleRequest("http://localhost:9099/api/post_farmerdata")
+    @PostMapping("/post_farmerdata")
+
     public ResponseData PostMsqlData(@RequestBody Feature feature) throws Exception {
 
         final String reqID = UUID.randomUUID().toString();
@@ -389,27 +370,33 @@ public class FarmerController extends BaseController {
             }*/
         if (isEmpty(head_name)) {
             logger.warn("Invalid request param `head_name`: " + head_name);
-            throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_USER_NAME);
+            /*throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_USER_NAME);*/
+            throw new CustomApplicationException(HttpStatus.BAD_REQUEST, ResponseCode.CLIENT_INVALID_REQ_PARAM_USER_NAME.toString());
+
         }
         if (isEmpty(gender)) {
             logger.warn("Invalid request param `gender`: " + gender);
-            throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_USER_NAME);
+            throw new CustomApplicationException(HttpStatus.BAD_REQUEST, ResponseCode.CLIENT_INVALID_REQ_PARAM_GENDER.toString());
+
         }
         if (isEmpty(son_wife_daughter)) {
             logger.warn("Invalid request param `son_wife_daughter`: " + son_wife_daughter);
-            throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_RELATION);
+            throw new CustomApplicationException(HttpStatus.BAD_REQUEST, ResponseCode.CLIENT_INVALID_REQ_PARAM_RELATION.toString());
+
         }
         if (isEmpty(literacy)) {
             logger.warn("Invalid request param `literacy`: " + literacy);
-            throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_LITERACY);
+            throw new CustomApplicationException(HttpStatus.BAD_REQUEST, ResponseCode.CLIENT_INVALID_REQ_PARAM_LITERACY.toString());
+
         }
         if (isEmpty(village)) {
             logger.warn("Invalid request param `village`: " + village);
-            throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_VILLAGE_NAME);
+            throw new CustomApplicationException(HttpStatus.BAD_REQUEST, ResponseCode.CLIENT_INVALID_REQ_PARAM_VILLAGE_NAME.toString());
+
         }
-       /* if (isEmpty((CharSequence) coordinates)) {
+        /*if (isEmpty(feature.getProperties())) {
             logger.warn("Invalid request param `farmer_address_coordinates`: " + coordinates);
-            throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_ADDRESS_COORDINATES);
+            throw new CustomApplicationException(HttpStatus.BAD_REQUEST, ResponseCode.CLIENT_INVALID_REQ_PARAM_ADDRESS_COORDINATES.toString());
         }*/
 
         //String head_name = "abc";
@@ -438,13 +425,13 @@ public class FarmerController extends BaseController {
 
         // update RequestContext for tracking with reqID
         RequestContext.add("reqID", reqID);
-        try {
+
             LinkedHashMap<String, Object> retData = new LinkedHashMap<>();
 
-            Optional<UserRegistration> user_register_info = saiaUserRepository.findById(user_id);
+            UserRegistration user_register_info = saiaUserRepository.findById(user_id);
             SaiaFarmerData farmerData = null;
-            if (user_register_info.equals(Optional.empty())) {
-                throwErrorException(Response.Status.UNAUTHORIZED, ResponseCode.CLIENT_USER_ID_NOT_EXISTING);
+            if (user_register_info == null) {
+                throw new CustomApplicationException(HttpStatus.UNAUTHORIZED, ResponseCode.CLIENT_USER_ID_NOT_EXISTING.toString());
             } else {
 
                 ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
@@ -490,18 +477,8 @@ public class FarmerController extends BaseController {
 
             //String something = new String(String.valueOf(dao.Comment()));
             return resData;
-        } catch (RESTException re) {
-            logger.error("REST Exception:" + re.getMessage(), re);
-            throw re;
-        } catch (Exception e) {
-            RequestContext.clear();
-            logger.error("Internal Error. Reason:" + e.getMessage(), e);
-            final ResponseStatus status = new ResponseStatus(reqID, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                    ResponseCode.SERVER_INTERNAL_SERVER_ERROR.getCode(),
-                    ResponseCode.SERVER_INTERNAL_SERVER_ERROR.getText());
-            throw new RESTException(Response.Status.INTERNAL_SERVER_ERROR, MediaType.APPLICATION_JSON.toString(), status);
-        }
-        //return  status;
+
+
 
 
     }

@@ -257,7 +257,7 @@ public class ClientSaiaFarmApplication {
 			return null;
 		}
 
-		resultSet = statement.executeQuery("select * from sai.agri_farm");
+		resultSet = statement.executeQuery("select head_name, gender, son_wife_daughter, literacy, village, address_landmark, ST_AsText(farmer_address_coordinates)  from sai.agri_farm");
 
 		ArrayList<SaiaFarmData> msqlData = farmwriteResultSet(resultSet);
 
