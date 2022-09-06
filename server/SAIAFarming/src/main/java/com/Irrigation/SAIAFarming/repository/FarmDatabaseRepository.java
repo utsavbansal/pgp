@@ -10,6 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface FarmDatabaseRepository extends JpaRepository<FarmDatabase, Integer> {
+
+    FarmDatabase findByUserIdAndFarmName(String userId, String farmName);
+    FarmDatabase findByFarmName(String farmName);
     /*@Query(value = "select * from agri_farm where farm_id = CONCAT(farm_id);", nativeQuery = true )
     Optional<FarmDatabase> findById(@Param("farm_id")Integer farm_id);*/
 }

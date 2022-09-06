@@ -2,23 +2,74 @@ package com.SAIAFarm.SAIAFarm.Response;
 
 public class SaiaFarmData {
     String farmer_id;
+    String farm_id;
+    String type;
     String farmsizecategory;  ///farmsize(marginal, small,medium,large)
     String farm_name;
-    String farm_coordinates;
     String farm_type;
     String farm_size;   ////Area in Numeric form
+    String farm_coordinates;
+    String userId;
+    String address;
+    String date_created;
+    String date_modified;
 
-    public SaiaFarmData() {
+    public SaiaFarmData(String farmsizecategory, String farm_name, String farm_coordinates, String farm_type, String farm_size) {
     }
 
-    public SaiaFarmData(String farmer_id, String farmsizecategory, String farm_name, String farm_coordinates, String farm_type, String farm_size) {
+    public SaiaFarmData(String farm_id,String farmer_id, String type, String farmsizecategory, String farm_name, String farm_type, String farm_size, String farm_coordinates, String userId, String address, String date_created, String date_modified) {
+        this.farm_id = farm_id;
+        this.farmer_id = farmer_id;
+        this.type = type;
+        this.farmsizecategory = farmsizecategory;
+        this.farm_name = farm_name;
+        this.farm_type = farm_type;
+        this.farm_size = farm_size;
+        this.farm_coordinates = farm_coordinates;
+        this.userId = userId;
+        this.address = address;
+        this.date_created = date_created;
+        this.date_modified = date_modified;
+
+    }
+
+    public SaiaFarmData(String farmer_id, String farmsizecategory, String farm_name, String farm_type, String farm_size, String farm_coordinates, String userId, String address) {
         this.farmer_id = farmer_id;
         this.farmsizecategory = farmsizecategory;
         this.farm_name = farm_name;
-        this.farm_coordinates = farm_coordinates;
         this.farm_type = farm_type;
         this.farm_size = farm_size;
+        this.farm_coordinates = farm_coordinates;
+        this.userId = userId;
+        this.address = address;
 
+    }
+    /*public SaiaFarmData(String farmer_id, String farmsizecategory, String farm_name, String farm_type, String farm_size, String farm_coordinates, String userId, String address) {
+        this.farmer_id = farmer_id;
+        this.farmsizecategory = farmsizecategory;
+        this.farm_name = farm_name;
+        this.farm_type = farm_type;
+        this.farm_size = farm_size;
+        this.farm_coordinates = farm_coordinates;
+        this.userId = userId;
+        this.address = address;
+
+    }*/
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getFarmer_id() {
@@ -69,5 +120,19 @@ public class SaiaFarmData {
         this.farm_size = farm_size;
     }
 
+    public String getAddress() {
+        return address;
+    }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getDate_created() {
+        return date_created;
+    }
+
+    public String getDate_modified() {
+        return date_modified;
+    }
 }

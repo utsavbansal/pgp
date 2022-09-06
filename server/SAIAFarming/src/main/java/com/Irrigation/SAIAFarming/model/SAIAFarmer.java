@@ -1,6 +1,8 @@
 package com.Irrigation.SAIAFarming.model;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.awt.*;
 
@@ -13,11 +15,20 @@ public class SAIAFarmer {
     String village ;
     Geometry farmer_address_coordinates ;
     String address_landmark ;
+    //@FullTextField
+    Address address;
+
+    /*org.wololo.geojson.Geometry;
+    org.locationtech.jts.geom.Geometry;*/
+
+
 
     public SAIAFarmer() {
     }
 
-    public SAIAFarmer(String user_id, String head_name, String gender, String son_wife_daughter, String literacy, String village, Geometry farmer_address_coordinates, String address_landmark) {
+
+
+    /*public SAIAFarmer(String user_id, String head_name, String gender, String son_wife_daughter, String literacy, String village, Geometry farmer_address_coordinates, String address_landmark) {
         this.user_id = user_id;
         this.head_name = head_name;
         this.gender = gender;
@@ -26,6 +37,17 @@ public class SAIAFarmer {
         this.village = village;
         this.farmer_address_coordinates = farmer_address_coordinates;
         this.address_landmark = address_landmark;
+    }*/
+    public SAIAFarmer(String user_id, String head_name, String gender, String son_wife_daughter, String literacy, String village, Geometry farmer_address_coordinates, String address_landmark, Address address) {
+        this.user_id = user_id;
+        this.head_name = head_name;
+        this.gender = gender;
+        this.son_wife_daughter = son_wife_daughter;
+        this.literacy = literacy;
+        this.village = village;
+        this.farmer_address_coordinates = farmer_address_coordinates;
+        this.address_landmark = address_landmark;
+        this.address = address;
     }
 
     public String getHead_name() {
@@ -90,5 +112,13 @@ public class SAIAFarmer {
 
     public void setUser_id(String user_id) {
         this.user_id = user_id;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 }

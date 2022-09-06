@@ -2,12 +2,17 @@ package com.SAIAFarm.SAIAFarm;
 
 import com.SAIAFarm.SAIAFarm.Response.SaiaFarmerData;
 import com.SAIAFarm.SAIAFarm.Response.SaiaFarmData;
+import com.SAIAFarm.SAIAFarm.Response.SaiaiParcelData;
 import com.SAIAFarm.SAIAFarm.Utils.AppProperties;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import org.wololo.geojson.Geometry;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -45,6 +50,7 @@ public class ClientSaiaFarmApplication {
 	public boolean sqlconn() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
+			//Class.forName("com.mysql.jdbc.Driver");
 			Properties props = new Properties();
 			//String sqldriver = AppProperties.INSTANCE.getMysqlDriver();
 			String sqlhost = AppProperties.INSTANCE.getMysqlUrl();
@@ -64,7 +70,7 @@ public class ClientSaiaFarmApplication {
 	}
 
 	//Get whole farmer data of farmers (for admin only)
-	public ArrayList FarmerData() throws SQLException, ClassNotFoundException {
+	public ArrayList FarmerData() throws SQLException, ClassNotFoundException, ParseException {
 
 		boolean connectionValue = this.sqlconn();
 		if(!connectionValue){
@@ -76,7 +82,7 @@ public class ClientSaiaFarmApplication {
 
 		//resultSet = statement.executeQuery("select head_name, gender, son_wife_daughter, literacy, village, address_landmark, farmer_address_coordinates from sai.saia_farmers");
 			//resultSet = statement.executeQuery("select * from sai.saia_farmers");
-			resultSet = statement.executeQuery("select head_name, gender, son_wife_daughter, literacy, village, address_landmark, ST_AsText(farmer_address_coordinates)  from sai.saia_farmers");
+			resultSet = statement.executeQuery("select user_id, farmer_id, type, head_name, gender, son_wife_daughter, literacy, ST_AsText(farmer_address_coordinates), address, date_created, date_modified  from sai.saia_farmers");
 
 
 			System.out.println("check point 2 all");
@@ -96,7 +102,7 @@ public class ClientSaiaFarmApplication {
 
 
 	//write data in result set after getting farmer data from the sql query (for admin)
-	private ArrayList<SaiaFarmerData> writeResultSet(ResultSet resultSet) throws SQLException {
+	/*private ArrayList<SaiaFarmerData> writeResultSet(ResultSet resultSet) throws SQLException {
 		// ResultSet is initially before the first data set
 		List<String> list = new ArrayList<String>();
 		ArrayList<SaiaFarmerData> farmerData = new ArrayList<>();
@@ -133,13 +139,82 @@ public class ClientSaiaFarmApplication {
 		}
 		System.out.println(list);
 		System.out.println(farmerData);
+
+		return farmerData;
+
+	}*/
+  /////////writeset result for json
+	private ArrayList<SaiaFarmerData> writeResultSet(ResultSet resultSet) throws SQLException, ParseException {
+		// ResultSet is initially before the first data set
+		List<String> list = new ArrayList<String>();
+		ArrayList<SaiaFarmerData> farmerData = new ArrayList<>();
+
+		while (resultSet.next()) {
+
+			System.out.println(resultSet);
+
+			String user_id = resultSet.getString("user_id");
+			String farmer_id = resultSet.getString("farmer_id");
+			String type = resultSet.getString("type");
+			String head_name = resultSet.getString("head_name");
+			String gender = resultSet.getString("gender");
+			String son_wife_daughter = resultSet.getString("son_wife_daughter");
+			String literacy = resultSet.getString("literacy");
+			//String village = resultSet.getString("village");
+
+			//String address_landmark = resultSet.getString("address_landmark");
+			String address = resultSet.getString("address");
+			System.out.println("check point 4 all");
+			String date_created = resultSet.getString("date_created");
+			String date_modified = resultSet.getString("date_modified");
+			//Geometry farmer_address_coordinates = (Geometry) resultSet.getBlob("farmer_address_coordinates");
+			//Blob farmer_address_coordinates = resultSet.getBlob("farmer_address_coordinates");
+			//ArrayList farmer_address_coordinates = (ArrayList) resultSet.getArray(1);
+			String farmer_address_coordinates = resultSet.getString("ST_AsText(farmer_address_coordinates)");
+			System.out.println("Array: "+farmer_address_coordinates);
+			System.out.println("check point 5 all");
+
+
+			String wktString = farmer_address_coordinates;
+			WKTReader reader = new WKTReader();
+			Geometry geom = reader.read(wktString);
+
+			System.out.println("return to chk json");
+			System.out.println(geom.getGeometryType());
+			//System.out.println(Arrays.stream(geom.getCoordinates()).toString());
+			System.out.println(geom.getCoordinate());
+			System.out.println(geom.getCoordinate().toString());
+			//System.out.println(Arrays.stream(geom.getCoordinates()).toArray().toString());
+			System.out.println(geom.getCoordinates().toString());
+
+
+
+
+
+			SaiaFarmerData cData = new SaiaFarmerData(resultSet.getString("user_id"),resultSet.getString("farmer_id"),resultSet.getString("type"),resultSet.getString("head_name"), resultSet.getString("gender"), resultSet.getString("son_wife_daughter"),
+					resultSet.getString("literacy"), farmer_address_coordinates, resultSet.getString("address"),resultSet.getString("date_created"), resultSet.getString("date_modified"));
+
+//			SaiaFarmerData cData = new SaiaFarmerData(resultSet.getString("farmer_id"),resultSet.getString("type"),resultSet.getString("head_name"), resultSet.getString("gender"), resultSet.getString("son_wife_daughter"),
+//					resultSet.getString("literacy"), farmer_address_coordinates, resultSet.getString("address"));
+
+			//SaiaFarmerData cData = new SaiaFarmerData(resultSet.getString("head_name"), resultSet.getString("gender"),"","","","", farmer_address_coordinates);
+			System.out.println("check point 6 all");
+			farmerData.add(cData);
+
+			list.add(resultSet.getString(2));
+
+		}
+		System.out.println(list);
+		System.out.println(farmerData);
+
 		return farmerData;
 
 	}
 
 
 	//Get farmer data of farmers (for single farmer)
-	public ArrayList SingleFarmerDetail(int farmer_id) throws SQLException, ClassNotFoundException {
+	public ArrayList SingleFarmerDetail(int farmer_id) throws SQLException, ClassNotFoundException, ParseException {
+
 
 		boolean connectionValue = this.sqlconn();
 		if(!connectionValue){
@@ -152,7 +227,8 @@ public class ClientSaiaFarmApplication {
 			//resultSet = statement.executeQuery("select head_name, gender, son_wife_daughter, literacy, village, address_landmark, farmer_address_coordinates from sai.saia_farmers");
 			//resultSet = statement.executeQuery("select * from sai.saia_farmers");
 			System.out.println("check1 for single farmer");
-			String query = "select head_name, gender, son_wife_daughter, literacy, village, address_landmark, ST_AsText(farmer_address_coordinates)  from sai.saia_farmers WHERE farmer_id ="+farmer_id;
+			//String query = "select head_name, gender, son_wife_daughter, literacy, village, address_landmark, ST_AsText(farmer_address_coordinates)  from sai.saia_farmers WHERE farmer_id ="+farmer_id;
+			String query = "select user_id, farmer_id, type, head_name, gender, son_wife_daughter, literacy, address, ST_AsText(farmer_address_coordinates), date_created, date_modified from sai.saia_farmers WHERE farmer_id ="+farmer_id;
 			//System.out.println("sql query " + pstmt.toString());
 			resultSet = statement.executeQuery(query);
 			System.out.println("check2 for single farmer");
@@ -218,8 +294,9 @@ public class ClientSaiaFarmApplication {
 	}*/
 
 	//insert farmer data (used in POST API's)
-	public SaiaFarmerData farmerPostIntoDataBase(String head_name, String gender, String son_wife_daughter, String literacy, String village, String address_landmark, String farmer_address_coordinates) throws SQLException {
+/*	public SaiaFarmerData farmerPostIntoDataBase(String head_name, String gender, String son_wife_daughter, String literacy, String village, String address_landmark, String farmer_address_coordinates) throws SQLException {
 		boolean connectionValue = this.sqlconn();
+		System.out.println("cheking properties sql");
 		if (!connectionValue) {
 			System.out.println("Exception: not connected properly");
 			return null;
@@ -228,7 +305,8 @@ public class ClientSaiaFarmApplication {
 		//System.out.println("check point 5");
 		//this.statement = this.connect.createStatement();
 		//this.preparedStatement = this.connect.prepareStatement("insert into  sai.comments values (default, ?, ?, ?, ? , ?, ?)");
-		this.preparedStatement = this.connect.prepareStatement("insert into  sai.saia_farmers (head_name, gender, son_wife_daughter, literacy, village, address_landmark, farmer_address_coordinates) VALUES (?, ?, ? , ?, ?, ?, ST_GeomFromGeoJSON(?))");
+		this.preparedStatement = this.connect.prepareStatement("insert into  sai.saia_farmers (head_name, gender, son_wife_daughter, literacy, village, address_landmark, farmer_address_coordinates, updated_time) VALUES (?, ?, ? , ?, ?, ?, ST_GeomFromGeoJSON(?), now())");
+		//this.preparedStatement = this.connect.prepareStatement("insert into  sai.agri_farm (farmer_id, farmsizecategory, farm_name, farm_type, farm_size, farm_coordinates, created_time, updated_time, user_id) VALUES (?, ?, ? , ?, ?, ST_GeomFromGeoJSON(?), now(), now(), ?)");
 		//this.preparedStatement = this.connect.prepareStatement("insert into  sai.saia_farmers (head_name, gender, son_wife_daughter, literacy, village, address_landmark, farmer_address_coordinates) VALUES (?, ?, ? , ?, ?, ?, ST_GeomFromText(?))");
 		System.out.println("head_name," + head_name + " gender " + gender + " son_wife_daughter " + son_wife_daughter + " literacy " + literacy + " village " + village +   " address_landmark " + address_landmark + " farmer_address_coordinates " + farmer_address_coordinates );
 		//String dateMysql = Utils.formatDate(date);
@@ -246,10 +324,48 @@ public class ClientSaiaFarmApplication {
 		return farmerPostData;
 
 		// You need to close the resultSet
+	}*/
+
+	////for Json
+	public SaiaFarmerData farmerPostIntoDataBase(String user_id, String head_name, String gender, String son_wife_daughter, String literacy, String farmer_address_coordinates, String address) throws SQLException {
+		boolean connectionValue = this.sqlconn();
+		System.out.println("cheking properties sql");
+		if (!connectionValue) {
+			System.out.println("Exception: not connected properly");
+			return null;
+		}
+		//this.connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/sai?user=root&password=12345678");
+		//System.out.println("check point 5");
+		//this.statement = this.connect.createStatement();
+		//this.preparedStatement = this.connect.prepareStatement("insert into  sai.comments values (default, ?, ?, ?, ? , ?, ?)");
+		//this.preparedStatement = this.connect.prepareStatement("insert into  sai.saia_farmers (head_name, gender, son_wife_daughter, literacy, village, address_landmark, farmer_address_coordinates, updated_time) VALUES (?, ?, ? , ?, ?, ?, ST_GeomFromGeoJSON(?), now())");
+		///this.preparedStatement = this.connect.prepareStatement("insert into  sai.saia_farmers (head_name, gender, son_wife_daughter, literacy, farmer_address_coordinates, address, date_modified) VALUES (?, ?, ? , ?, ST_GeomFromGeoJSON(?), ?, now())");
+		this.preparedStatement = this.connect.prepareStatement("insert into  sai.saia_farmers (user_id, head_name, gender, son_wife_daughter, literacy, farmer_address_coordinates, address) VALUES (?, ?, ?, ? , ?, ST_GeomFromGeoJSON(?), ?)");
+		//this.preparedStatement = this.connect.prepareStatement("insert into  sai.agri_farm (farmer_id, farmsizecategory, farm_name, farm_type, farm_size, farm_coordinates, created_time, updated_time, user_id) VALUES (?, ?, ? , ?, ?, ST_GeomFromGeoJSON(?), now(), now(), ?)");
+		//this.preparedStatement = this.connect.prepareStatement("insert into  sai.saia_farmers (head_name, gender, son_wife_daughter, literacy, village, address_landmark, farmer_address_coordinates) VALUES (?, ?, ? , ?, ?, ?, ST_GeomFromText(?))");
+		//System.out.println("head_name," + head_name + " gender " + gender + " son_wife_daughter " + son_wife_daughter + " literacy " + literacy + " village " + village +   " address_landmark " + address_landmark + " farmer_address_coordinates " + farmer_address_coordinates );
+		System.out.println("user_id," + user_id + "head_name," + head_name + " gender " + gender + " son_wife_daughter " + son_wife_daughter + " literacy " + literacy +  " farmer_address_coordinates " + farmer_address_coordinates );
+		//String dateMysql = Utils.formatDate(date);
+		this.preparedStatement.setString(1, user_id);
+		this.preparedStatement.setString(2, head_name);
+		this.preparedStatement.setString(3, gender);
+		this.preparedStatement.setString(4, son_wife_daughter);
+		this.preparedStatement.setString(5, literacy);
+		//this.preparedStatement.setString(5, village);
+		//this.preparedStatement.setString(6, address_landmark);
+		this.preparedStatement.setString(6, farmer_address_coordinates);
+		this.preparedStatement.setString(7, address);
+		//this.preparedStatement.setObject(7, (Geometry) farmer_address_coordinates);
+
+		this.preparedStatement.executeUpdate();
+		SaiaFarmerData farmerPostData = new SaiaFarmerData(user_id, head_name, gender, son_wife_daughter, literacy, farmer_address_coordinates, address);
+		return farmerPostData;
+
+		// You need to close the resultSet
 	}
 
 	//Get whole farm data of farmers (for admin only)
-	public ArrayList FarmData() throws SQLException, ClassNotFoundException {
+	public List<SaiaFarmData> FarmData() throws SQLException, ClassNotFoundException {
 
 		boolean connectionValue = this.sqlconn();
 		if(!connectionValue){
@@ -257,47 +373,67 @@ public class ClientSaiaFarmApplication {
 			return null;
 		}
 
-		resultSet = statement.executeQuery("select head_name, gender, son_wife_daughter, literacy, village, address_landmark, ST_AsText(farmer_address_coordinates)  from sai.agri_farm");
-
-		ArrayList<SaiaFarmData> msqlData = farmwriteResultSet(resultSet);
+		resultSet = statement.executeQuery("select user_id, farm_id, farmer_id, type, farm_name, farmsizecategory, farm_type, farm_size, address, ST_AsText(farm_coordinates), date_created, date_modified  from sai.agri_farm");
+		List<SaiaFarmData> retSariFarm = new ArrayList<>();
+		retSariFarm = farmwriteResultSet(resultSet);
 
 		//ArrayList<Comment> comment= new ArrayList<>();
 
-		return msqlData;
+		return retSariFarm;
 	}
 
 	//write data in result set after getting farm data from the sql query (for admin)
-	private ArrayList<SaiaFarmData> farmwriteResultSet(ResultSet resultSet) throws SQLException {
+	private List<SaiaFarmData> farmwriteResultSet(ResultSet resultSet) throws SQLException {
 		// ResultSet is initially before the first data set
 		List<String> list = new ArrayList<String>();
-		ArrayList<SaiaFarmData> farmData = new ArrayList<>();
-
+		List<SaiaFarmData> farmData = new ArrayList<>();
+		boolean isFarmsExist = false;
 		while (resultSet.next()) {
 
-
+			String farmer_id =resultSet.getString("farmer_id");
+			String user_id =resultSet.getString("user_id");
+			String farm_id =resultSet.getString("farm_id");
+			String type = resultSet.getString("type");
 			String farmsizecategory = resultSet.getString("farmsizecategory");
 			String farm_name = resultSet.getString("farm_name");
-			String farm_coordinates = resultSet.getString("farm_coordinates");
+			String farm_coordinates = resultSet.getString("ST_AsText(farm_coordinates)");
+			//String farm_coordinates = resultSet.getString("farm_coordinates");
 			String farm_type = resultSet.getString("farm_type");
 			String farm_size = resultSet.getString("farm_size");
+			String address =resultSet.getString("address");
+			String date_created = resultSet.getString("date_created");
+			String date_modified = resultSet.getString("date_modified");
+			list.add(farm_name);
 
+			/*SaiaFarmerData cData = new SaiaFarmerData(resultSet.getString("user_id"),resultSet.getString("farmer_id"),resultSet.getString("type"),resultSet.getString("head_name"), resultSet.getString("gender"), resultSet.getString("son_wife_daughter"),
+					resultSet.getString("literacy"), farmer_address_coordinates, resultSet.getString("address"),resultSet.getString("date_created"), resultSet.getString("date_modified"));*/
+			/*SaiaFarmData cData = new SaiaFarmData(resultSet.getString("user_id"),resultSet.getString("farmer_id"),resultSet.getString("type"),resultSet.getString("farmsizecategory"), resultSet.getString("farm_name"), "farm_coordinates",
+					resultSet.getString("farm_type"),resultSet.getString("farm_size"), resultSet.getString("address"),resultSet.getString("date_created"), resultSet.getString("date_modified"));*/
+			SaiaFarmData cData = new SaiaFarmData(resultSet.getString("farm_id"),resultSet.getString("farmer_id"),resultSet.getString("type"),resultSet.getString("farmsizecategory"), resultSet.getString("farm_name"), resultSet.getString("farm_type"), resultSet.getString("farm_size"), farm_coordinates,
+					resultSet.getString("user_id"), resultSet.getString("address"),resultSet.getString("date_created"), resultSet.getString("date_modified"));
+//			SaiaFarmData cData = new SaiaFarmData(resultSet.getString("farmsizecategory"), resultSet.getString("farm_name"),"farm_coordinates",
+//					resultSet.getString("farm_type"),resultSet.getString("farm_size"));
+//			SaiaFarmData cData = new SaiaFarmData(farmsizecategory, farm_name,farm_coordinates, farm_type, farm_size);
 
-
-			SaiaFarmData cData = new SaiaFarmData(resultSet.getString("farmsizecategory"), resultSet.getString("farmsizecategory"), resultSet.getString("farm_name"), resultSet.getString("farm_coordinates"),
-					resultSet.getString("farm_type"),resultSet.getString("farm_size"));
 			farmData.add(cData);
 
-			list.add(resultSet.getString(2));
+			//list.add(resultSet.getString(2));
 
 		}
-		System.out.println(list);
-		System.out.println(farmData);
+		int size = list.size();
+		if(size >=1)
+		{
+			isFarmsExist = true;
+			System.out.println("eixit farm name: "+list);
+
+		}
+		System.out.println("is farm already exist: "+isFarmsExist);
 		return farmData;
 
 	}
 
 	//insert farm data (used in POST API's)
-	public SaiaFarmData farmPostIntoDataBase(String farmer_id, String farmsizecategory, String farm_name, String farm_coordinates, String farm_type, String farm_size) throws SQLException {
+	public SaiaFarmData farmPostIntoDataBase(String farmer_id, String farmsizecategory, String farm_name, String farm_type, String farm_size, String farm_coordinates, String userId, String address) throws SQLException {
 		boolean connectionValue = this.sqlconn();
 		if (!connectionValue) {
 			System.out.println("Exception: not connected properly");
@@ -307,25 +443,213 @@ public class ClientSaiaFarmApplication {
 		//System.out.println("check point 5");
 		//this.statement = this.connect.createStatement();
 		//this.preparedStatement = this.connect.prepareStatement("insert into  sai.comments values (default, ?, ?, ?, ? , ?, ?)");
-		this.preparedStatement = this.connect.prepareStatement("insert into  sai.agri_farm values (default, ?, ?, ?, ? , ?, ?)");
-		System.out.println("farmer_id," + farmer_id +"farmsizecategory," + farmsizecategory + " farm_name " + farm_name + " farm_coordinates " + farm_coordinates + " farm_type " + farm_type + " farm_size " + farm_size);
+		//this.preparedStatement = this.connect.prepareStatement("insert into  sai.agri_farm values (default, ?, ?, ?, ? , ?, ?)");
+		//this.preparedStatement = this.connect.prepareStatement("insert into  sai.agri_farm (farmer_id, farmsizecategory, farm_name, farm_type, farm_size, farm_coordinates) VALUES (?, ?, ? , ?, ?, ST_GeomFromGeoJSON(?))");
+		this.preparedStatement = this.connect.prepareStatement("insert into  sai.agri_farm (farmer_id, farmsizecategory, farm_name, farm_type, farm_size, farm_coordinates, user_id, address) VALUES (?, ?, ? , ?, ?, ST_GeomFromGeoJSON(?), ?, ?)");
+		System.out.println("farmer_id," + farmer_id +"farmsizecategory," + farmsizecategory + " farm_name " + farm_name + " farm_type " + farm_type + " farm_size " + farm_size + " farm_coordinates " + farm_coordinates + " address " + address);
 		//String dateMysql = Utils.formatDate(date);
 
 
-
-		this.preparedStatement.setString(1, farm_coordinates);
-		this.preparedStatement.setString(2, farm_name);
-		this.preparedStatement.setString(3, farm_size);
+		this.preparedStatement.setString(1, farmer_id);
+		this.preparedStatement.setString(2, farmsizecategory);
+		this.preparedStatement.setString(3, farm_name);
 		this.preparedStatement.setString(4, farm_type);
-		this.preparedStatement.setString(5, farmsizecategory);
-		this.preparedStatement.setString(6, farmer_id);
+		this.preparedStatement.setString(5, farm_size);
+		this.preparedStatement.setString(6, farm_coordinates);
+		this.preparedStatement.setString(7, userId);
+		this.preparedStatement.setString(8, address);
+
+
 
 		this.preparedStatement.executeUpdate();
-		SaiaFarmData farmPostData = new SaiaFarmData(farmer_id, farmsizecategory, farm_name, farm_coordinates, farm_type, farm_size);
+		SaiaFarmData farmPostData = new SaiaFarmData(farmer_id, farmsizecategory, farm_name, farm_type, farm_size, farm_coordinates, userId, address);
 		return farmPostData;
 
 		// You need to close the resultSet
 	}
+
+	//To check farm data exist or not(provided at the time of insertion of adding farm by the user)
+	public List<SaiaFarmData> CheckFarmDataDuplicate(String userId, String farmName) throws SQLException, ClassNotFoundException {
+
+		boolean connectionValue = this.sqlconn();
+		if(!connectionValue){
+			System.out.println("Exception: not connected properly");
+			return null;
+		}
+		else {
+
+
+			//resultSet = statement.executeQuery("select head_name, gender, son_wife_daughter, literacy, village, address_landmark, farmer_address_coordinates from sai.saia_farmers");
+			//resultSet = statement.executeQuery("select * from sai.saia_farmers");
+			//String query = "select user_id, farm_name, farm_size, farm_type, farmsizecategory, farmer_id, ST_AsText(farm_coordinates) from sai.agri_farm WHERE farmer_id =+userId";
+			String query = "select user_id, farm_name, farm_size, farm_type, farmsizecategory, farmer_id, ST_AsText(farm_coordinates) from sai.agri_farm WHERE user_id ='" + userId + "' AND farm_name='" + farmName + "'";
+
+			//resultSet = statement.executeQuery("select user_id, farm_name, farm_size, farm_type, farmsizecategory, farmer_id, ST_AsText(farm_coordinates) from sai.agri_farm WHERE farmer_id ="+farmer_id);
+			resultSet = statement.executeQuery(query);
+
+
+
+
+			//resultSet = statement.executeQuery("select * from sai.saia_farmers");
+
+			List<SaiaFarmData> msqlData = farmwriteResultSet(resultSet);
+			//System.out.println("check point 3 all");
+
+
+			//ArrayList<Comment> comment= new ArrayList<>();
+
+			return msqlData;
+		}}
+
+
+	public List<SaiaFarmData> SingleFarmData(int farm_id) throws SQLException, ClassNotFoundException, ParseException {
+
+
+		boolean connectionValue = this.sqlconn();
+		if(!connectionValue){
+			System.out.println("Exception: not connected properly");
+			return null;
+		}
+		else {
+			System.out.println("check1 for single farmer");
+			String query = "select user_id, farm_id, farmer_id, type, farm_name, farmsizecategory, farm_type, farm_size, address, ST_AsText(farm_coordinates), date_created, date_modified from sai.agri_farm WHERE farm_id ="+farm_id;
+			resultSet = statement.executeQuery(query);
+			System.out.println("check2 for single farmer");
+			List<SaiaFarmData> msqlData = farmwriteResultSet(resultSet);
+			System.out.println("checking for farm data------------------"+msqlData);
+			return msqlData;
+		}}
+
+	/*public List<SaiaiParcelData> CheckParcelDataDuplicate(String user_id) throws SQLException, ClassNotFoundException {
+		boolean connectionValue = this.sqlconn();
+		if (!connectionValue) {
+			System.out.println("Exception: not connected properly");
+			return null;
+		} else {
+			System.out.println("check2 client parcel");
+			String query = "select parcel_id, user_id, farm_id, type, ST_AsText(location), area, category, related_source, belongs_to, has_agri_crop, has_agri_soil, last_planted_at, water_stressmean from sai.agri_parcel WHERE user_id ="+user_id;
+			System.out.println("check3 client parcel");
+			this.resultSet = this.statement.executeQuery(query);
+			List<SaiaiParcelData> msqlData = this.parcelwriteResultSet(this.resultSet);
+			return msqlData;
+		}
+	}*/
+
+	public List<SaiaiParcelData> SingleParcelData(int parcelId) throws SQLException, ClassNotFoundException, ParseException {
+		boolean connectionValue = this.sqlconn();
+		if (!connectionValue) {
+			System.out.println("Exception: not connected properly");
+			return null;
+		} else {
+			String query = "select parcel_id, user_id, farm_id, type, ST_AsText(location), area, category, related_source, belongs_to, has_agri_crop, has_agri_soil, last_planted_at, date_created, date_modified, water_stressmean from sai.agri_parcel WHERE parcel_id =" + parcelId;
+			this.resultSet = this.statement.executeQuery(query);
+
+			List<SaiaiParcelData> msqlData = this.parcelwriteResultSet(this.resultSet);
+			System.out.println("checking for parcel data------------------" + msqlData);
+			return msqlData;
+		}
+	}
+	private List<SaiaiParcelData> parcelwriteResultSet(ResultSet resultSet) throws SQLException {
+		// ResultSet is initially before the first data set
+		List<String> list = new ArrayList<String>();
+		List<SaiaiParcelData> parcelData = new ArrayList<>();
+		boolean isParcelExist = false;
+		while (resultSet.next()) {
+
+			String parcelId =resultSet.getString("parcel_id");
+			String userId =resultSet.getString("user_id");
+			String farm_id =resultSet.getString("farm_id");
+			String type = resultSet.getString("type");
+			String location = resultSet.getString("ST_AsText(location)");
+			String area = resultSet.getString("area");
+			String category = resultSet.getString("category");
+			String relatedSource =resultSet.getString("related_source");
+			String belongsTo = resultSet.getString("belongs_to");
+			String hasAgriCrop = resultSet.getString("has_agri_crop");
+			String hasAgriSoil = resultSet.getString("has_agri_soil");
+			String lastPlantedAt = resultSet.getString("last_planted_at");
+			String date_created = resultSet.getString("date_created");
+			String date_modified = resultSet.getString("date_modified");
+			String waterStressmean = resultSet.getString("water_stressmean");
+			System.out.println("client side check4");
+			//list.add(farm_name);
+
+			SaiaiParcelData cData = new SaiaiParcelData(resultSet.getString("parcel_id"), resultSet.getString("user_id"), resultSet.getString("farm_id"),resultSet.getString("type"), location, resultSet.getString("area"), resultSet.getString("category"), resultSet.getString("related_source"), resultSet.getString("belongs_to"),
+					 resultSet.getString("has_agri_crop"), resultSet.getString("has_agri_soil"), resultSet.getString("last_planted_at"), resultSet.getString("date_created"), resultSet.getString("date_modified"), resultSet.getString("water_stressmean"));
+			System.out.println("client side check5");
+
+			parcelData.add(cData);
+
+			//list.add(resultSet.getString(2));
+
+		}
+		int size = list.size();
+		if(size >=1)
+		{
+			isParcelExist = true;
+			System.out.println("eixit parcel: "+list);
+
+		}
+		System.out.println("is parcel already exist: "+isParcelExist);
+		return parcelData;
+
+	}
+
+	public SaiaiParcelData parcelPostIntoDataBase(String userId, String farm_id, String location, String area, String category, String relatedSource, String belongsTo, String hasAgriCrop, String hasAgriSoil, String lastPlantedAt, String waterStressmean) throws SQLException {
+		boolean connectionValue = this.sqlconn();
+		if (!connectionValue) {
+			System.out.println("Exception: not connected properly");
+			return null;
+		} else {
+			this.preparedStatement = this.connect.prepareStatement("insert into  sai.agri_parcel (user_id, farm_id, location, area, category, related_source, belongs_to, has_agri_crop, has_agri_soil, last_planted_at, water_stressmean) VALUES (?, ?, ST_GeomFromGeoJSON(?),? , ?, ?,  ?, ?, ?, ?,?)");
+			//System.out.println("farmer_id," + farmer_id + "farmsizecategory," + farmsizecategory + " farm_name " + farm_name + " farm_type " + farm_type + " farm_size " + farm_size + " farm_coordinates " + farm_coordinates + " address " + address);
+			this.preparedStatement.setString(1, userId);
+			this.preparedStatement.setString(2, farm_id);
+			this.preparedStatement.setString(3, location);
+			this.preparedStatement.setString(4, area);
+			this.preparedStatement.setString(5, category);
+			this.preparedStatement.setString(6, relatedSource);
+			this.preparedStatement.setString(7, belongsTo);
+			this.preparedStatement.setString(8, hasAgriCrop);
+			this.preparedStatement.setString(9, hasAgriSoil);
+			this.preparedStatement.setString(10, lastPlantedAt);
+			this.preparedStatement.setString(11, waterStressmean);
+			this.preparedStatement.executeUpdate();
+			SaiaiParcelData parcelPostData = new SaiaiParcelData(userId, farm_id, location, area, category, relatedSource, belongsTo, hasAgriCrop, hasAgriSoil, lastPlantedAt, waterStressmean);
+			return parcelPostData;
+		}
+	}
+
+	public List<SaiaiParcelData> ParcelData() throws SQLException, ClassNotFoundException {
+		boolean connectionValue = this.sqlconn();
+		if (!connectionValue) {
+			System.out.println("Exception: not connected properly");
+			return null;
+		} else {
+			this.resultSet = this.statement.executeQuery("select parcel_id, user_id, farm_id, type, ST_AsText(location), area, category, related_source, belongs_to, has_agri_crop, has_agri_soil, last_planted_at, date_created, date_modified, water_stressmean from sai.agri_parcel");
+			new ArrayList();
+			List<SaiaiParcelData> retSariParcel = this.parcelwriteResultSet(this.resultSet);
+			return retSariParcel;
+		}
+	}
+///commented below to check duplicate farmer in farmer table
+	/*public List<SaiaFarmerData> CheckDupFarmer(String user_id) throws SQLException, ClassNotFoundException, ParseException {
+
+		boolean connectionValue = this.sqlconn();
+		if(!connectionValue){
+			System.out.println("Exception: not connected properly");
+			return null;
+		}
+		else {
+
+			//String query = "select farmer_id, type, head_name, gender, son_wife_daughter, literacy, address, ST_AsText(farmer_address_coordinates), date_created, date_modified from sai.saia_farmers WHERE farmer_id ="+farmer_id;
+			String query = "select farmer_id, type, head_name, gender, son_wife_daughter, literacy, address, ST_AsText(farmer_address_coordinates), date_created, date_modified from sai.saia_farmers WHERE user_id = +user_id";
+			resultSet = statement.executeQuery(query);
+
+			List<SaiaFarmerData> msqlData = writeResultSet(resultSet);
+			return msqlData;
+		}}*/
+
 
 	private void close() {
 		try {

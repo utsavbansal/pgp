@@ -1,9 +1,10 @@
 package com.Irrigation.SAIAFarming.model;
 
 public class SAIAFarm {
+    String userId;
     String farmer_id;
     String farmsizecategory;
-    String farm_name;
+    String farmName;
     String farm_coordinates;
     String farm_type;
     String farm_size;
@@ -11,10 +12,11 @@ public class SAIAFarm {
     public SAIAFarm() {
     }
 
-    public SAIAFarm(String farmer_id, String farmsizecategory, String farm_name, String farm_coordinates, String farm_type, String farm_size) {
+    public SAIAFarm(String userId,String farmer_id, String farmsizecategory, String farmName, String farm_coordinates, String farm_type, String farm_size) {
+        this.userId = userId;
         this.farmer_id = farmer_id;
         this.farmsizecategory = farmsizecategory;
-        this.farm_name = farm_name;
+        this.farmName = farmName;
         this.farm_coordinates = farm_coordinates;
         this.farm_type = farm_type;
         this.farm_size = farm_size;
@@ -22,7 +24,21 @@ public class SAIAFarm {
 
     }
 
+    public String getUserId() {
+        return userId;
+    }
 
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getFarmName() {
+        return farmName;
+    }
+
+    public void setFarmName(String farmName) {
+        this.farmName = farmName;
+    }
 
     public String getFarmer_id() {
         return farmer_id;
@@ -40,13 +56,7 @@ public class SAIAFarm {
         this.farmsizecategory = farmsizecategory;
     }
 
-    public String getFarm_name() {
-        return farm_name;
-    }
 
-    public void setFarm_name(String farm_name) {
-        this.farm_name = farm_name;
-    }
 
     public String getFarm_coordinates() {
         return farm_coordinates;

@@ -1,0 +1,29 @@
+version: "3"
+services:
+  springboot-app:
+    container_name: spring-SAIAFarming
+    image: springboot-saiafarming
+    volumes:
+      - "/home/farmerzone/SAIAfarming:/opt"
+    restart: always
+    build: .
+    ports:
+      - 9099:9099
+
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 12345678
+      MYSQL_PORT: 3306
+  mysqldb:
+    container_name: mysqldb
+    image: mysql:8
+    volumes:
+      - /home/farmerzone/Desktop/Docker_compose_db:/var/lib/mysql
+
+    ports:
+      - 3307:3306
+
+    environment:
+      MYSQL_DATABASE: sai
+      MYSQL_ROOT_PASSWORD: 12345678
