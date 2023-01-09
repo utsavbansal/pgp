@@ -42,6 +42,10 @@ public class ParcelDatabase implements Serializable {
     private com.vividsolutions.jts.geom.Geometry location;
 
     @NotNull
+    @Column(name = "parcel_name")
+    private String parcelName;
+
+    @NotNull
     @Column(name = "area")
     private String area;
 

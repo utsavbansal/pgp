@@ -44,6 +44,39 @@ public class SaiaFarmData {
         this.address = address;
 
     }
+
+    public SaiaFarmData(String farm_coordinates, String farm_name) {
+
+        this.farm_coordinates = farm_coordinates;
+        this.farm_name = farm_name;
+
+    }
+
+
+
+    @Override
+    public String toString() {
+        return "SaiaFarmData{" +
+                "farmer_id='" + farmer_id + '\'' +
+                ", farm_id='" + farm_id + '\'' +
+                ", type='" + type + '\'' +
+                ", farmsizecategory='" + farmsizecategory + '\'' +
+                ", farm_name='" + farm_name + '\'' +
+                ", farm_type='" + farm_type + '\'' +
+                ", farm_size='" + farm_size + '\'' +
+                ", farm_coordinates='" + farm_coordinates + '\'' +
+                ", userId='" + userId + '\'' +
+                ", address='" + address + '\'' +
+                ", date_created='" + date_created + '\'' +
+                ", date_modified='" + date_modified + '\'' +
+                '}';
+
+
+    }
+
+
+
+
     /*public SaiaFarmData(String farmer_id, String farmsizecategory, String farm_name, String farm_type, String farm_size, String farm_coordinates, String userId, String address) {
         this.farmer_id = farmer_id;
         this.farmsizecategory = farmsizecategory;

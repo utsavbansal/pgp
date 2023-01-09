@@ -11,6 +11,7 @@ import com.Irrigation.SAIAFarming.exception.CustomApplicationException;
 import com.Irrigation.SAIAFarming.model.*;
 import com.Irrigation.SAIAFarming.repository.FarmerDatabaseRepository;
 import com.Irrigation.SAIAFarming.repository.UserRepository;
+import com.Irrigation.SAIAFarming.services.ETService;
 import com.Irrigation.SAIAFarming.utils.RequestContext;
 import com.Irrigation.SAIAFarming.utils.ResponseCode;
 import com.Irrigation.SAIAFarming.utils.Utils;
@@ -129,6 +130,9 @@ public class FarmerController extends BaseController {
         return farmerData;
 
     }
+
+    
+    
 
     /*@GET
     @Path("/farmer_data")
@@ -643,6 +647,8 @@ public class FarmerController extends BaseController {
         if (user_register_info == null) {
             throw new CustomApplicationException(HttpStatus.UNAUTHORIZED, ResponseCode.CLIENT_USER_ID_NOT_EXISTING.toString());
         } else {
+            int CheckDupFarmer = CheckDupFarmer(user_id);
+        if(CheckDupFarmer==Utils.OK) {
 
             ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
             /// SAIAFarmer farmerData = new SAIAFarmer(head_name,gender, son_wife_daughter, literacy, village, farmer_address_coordinates, address_landmark);
@@ -654,8 +660,9 @@ public class FarmerController extends BaseController {
 
             farmerData = dao.farmerPostIntoDataBase(user_id, head_name, gender, son_wife_daughter, literacy, coordinates, String.valueOf(address));
             ///SAIAFarmer responseData = new SAIAFarmer(farmerData.getHead_name(), farmerData.getGender(), farmerData.getSon_wife_daughter(), farmerData.getLiteracy(), farmerData.getVillage(), farmerData.getFarmer_address_coordinates(), farmerData.getAddress_landmark());
+            retData.put("data", farmerData);
 
-        }
+        }}
 
         //final MediaType mediaType = request.selectVariant(mtVariantList).getMediaType();
 
@@ -678,7 +685,7 @@ public class FarmerController extends BaseController {
 
 
         //HashMap<String, Object> retData = new HashMap<>();
-        retData.put("data", farmerData);
+        //retData.put("data", farmerData);
         //retData.put("address", addressString);
 
         ResponseData resData = new ResponseData(reqID, ResponseCode.SUCCESS.getCode(), Response.Status.OK.getStatusCode(), retData);
@@ -695,7 +702,7 @@ public class FarmerController extends BaseController {
 
     }
 
-   /* private int CheckDupFarmer(String user_id) throws SQLException, ClassNotFoundException, ParseException {
+    private int CheckDupFarmer(String user_id) throws SQLException, ClassNotFoundException, ParseException {
 
         ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
         List<SaiaFarmerData> FarmerExisting = dao.CheckDupFarmer(user_id);
@@ -709,7 +716,7 @@ public class FarmerController extends BaseController {
             throw new CustomApplicationException(HttpStatus.CONFLICT, ResponseCode.CLIENT_HAS_FARMER_WITH_USER_ID.toString());
         }
 
-    }*/
+    }
     /*@PostMapping("/postv2_farmerdata")
 
     public ResponseData PostMsqlDatav2(@RequestBody Feature feature) throws Exception {

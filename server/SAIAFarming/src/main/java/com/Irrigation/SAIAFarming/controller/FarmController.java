@@ -4,13 +4,11 @@ import com.Irrigation.SAIAFarming.SampleRequest;
 import com.Irrigation.SAIAFarming.entity.FarmDatabase;
 import com.Irrigation.SAIAFarming.entity.usermanagement.UserRegistration;
 import com.Irrigation.SAIAFarming.exception.CustomApplicationException;
-import com.Irrigation.SAIAFarming.model.ResponseData;
-import com.Irrigation.SAIAFarming.model.ResponseStatus;
-import com.Irrigation.SAIAFarming.model.SAIAFarm;
+import com.Irrigation.SAIAFarming.model.*;
 //import com.Irrigation.SAIAFarming.model.SAIAFarmer;
-import com.Irrigation.SAIAFarming.model.SAIAFarmer;
 import com.Irrigation.SAIAFarming.repository.FarmDatabaseRepository;
 import com.Irrigation.SAIAFarming.repository.UserRepository;
+import com.Irrigation.SAIAFarming.services.ETService;
 import com.Irrigation.SAIAFarming.utils.RequestContext;
 import com.Irrigation.SAIAFarming.utils.ResponseCode;
 import com.Irrigation.SAIAFarming.utils.Utils;
@@ -20,6 +18,7 @@ import com.SAIAFarm.SAIAFarm.Response.SaiaFarmerData;
 import com.vividsolutions.jts.io.ParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,6 +42,8 @@ import static org.aspectj.util.LangUtil.isEmpty;
 @RestController
 @Path("/api")
 public class FarmController extends BaseController {
+    @Autowired
+    private ETService etService;
 
 
     @Autowired
@@ -462,4 +463,125 @@ public class FarmController extends BaseController {
 
         return responseData;
     }
+
+    @GetMapping("/farmer_farm_data")
+
+    public ResponseData getfarms(@QueryParam(value = "userId") String userId) throws SQLException, ClassNotFoundException, ParseException {
+        //public ResponseData getfarm(@QueryParam(value = "farm_id") int farm_id){
+        RequestContext.clear(); //clear pre-existing data
+        // generating UUID for this new request
+        final String reqID = UUID.randomUUID().toString();
+        // update RequestContext for tracking with reqID
+        RequestContext.add("reqID", reqID);
+
+        if(isEmpty(String.valueOf(userId))){
+            logger.warn("Invalid request param `userId`: " + userId);
+            //throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_FARM_ID);
+        }
+        //get the farm data from DB using farm_id, if farm_id is not present then gives error
+        HashMap<String, Object> retData =new LinkedHashMap<>();
+        //FarmDatabase farmInfo = saiaFarmRepository.findOne(farm_id);
+        ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
+        //List<SaiaFarmData> retSaifarmsData = new ArrayList<>();
+        List<SaiaFarmData> farmsInfo = dao.FarmerFarmsData(userId);
+        System.out.println(farmsInfo);
+//        for(SaiaFarmData oneSingleFarm: farmsInfo){
+//            retSaifarmsData.add(oneSingleFarm);
+//        }
+
+        //Here we have to filter the data (use only desired fields)
+
+        retData.put("userId", farmsInfo);
+        RequestContext.clear();//clear the thread before return
+
+        ResponseData responseData = new ResponseData(reqID, Response.Status.OK.getStatusCode(), ResponseCode.SUCCESS.getCode(), retData);
+
+        return responseData;
+    }
+
+
+    @PostMapping("/et_farmdata")
+
+    public ResponseData ETFarmData(@RequestBody List<Feature> featureList) throws Exception {
+
+        final String reqID = UUID.randomUUID().toString();
+
+        List<FarmDatabase> farmDetailList = new ArrayList<>();
+        //List<FarmDatabase> farmsList = new ArrayList<>();
+        List<Feature> featureListReturned = new ArrayList<>();
+        RequestContext.clear();
+        SaiaFarmData etfarmData = null;
+        LinkedHashMap<String, Object> retData = new LinkedHashMap<>();
+
+        for (Feature feature : featureList) {
+            String userId = feature.getProperties().get("userId").toString();
+            String farmName = feature.getProperties().get("farm_name").toString();
+            String sdate = feature.getProperties().get("sdate").toString();
+            String edate = feature.getProperties().get("edate").toString();
+
+
+
+            if (isEmpty(userId)) {
+                logger.warn("Invalid request param `userId`: " + userId);
+                /*throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_USER_NAME);*/
+                throw new CustomApplicationException(HttpStatus.BAD_REQUEST, ResponseCode.CLIENT_INVALID_REQ_PARAM_USER_ID.toString());
+
+            }
+            if (isEmpty(farmName)) {
+                logger.warn("Invalid request param `farmName`: " + farmName);
+                /*throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_USER_NAME);*/
+                throw new CustomApplicationException(HttpStatus.BAD_REQUEST, ResponseCode.CLIENT_INVALID_REQ_PARAM_FARM_NAME.toString());
+
+            }
+            //here checking if a user is valid user or not
+            UserRegistration user_register_info = saiaUserRepository.findById(userId);
+            if(user_register_info == null)
+            {
+                throw new CustomApplicationException(HttpStatus.UNAUTHORIZED, ResponseCode.CLIENT_USER_ID_NOT_EXISTING.toString());
+            }
+
+            int userIdFarmNameCheck = ETCheckUserIdFarmName(userId,farmName);
+            if(userIdFarmNameCheck==Utils.OK){
+                ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
+
+                List<SaiaFarmData> etfarmsInfo = dao.ETFarmsData(farmName);
+
+                String response = etService.getEtDataFarm(etfarmsInfo, sdate, edate);
+
+
+                //System.out.println("getting response"+response);
+
+
+
+                retData.put("data", response);
+            }
+
+
+        }
+
+        ResponseData resData = new ResponseData(reqID, ResponseCode.SUCCESS.getCode(), Response.Status.OK.getStatusCode(), retData);
+        return resData;
+
+
+    }
+
+    private int ETCheckUserIdFarmName(String userId, String farmName) throws SQLException, ClassNotFoundException {
+
+        ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
+        List<SaiaFarmData> userIdFarmNameExisting = dao.ETCheckFarmDataExist(userId, farmName);
+        //System.out.println("this is check"+userIdFarmNameExisting);
+
+        if(userIdFarmNameExisting.isEmpty()){
+
+            throw new CustomApplicationException(HttpStatus.BAD_REQUEST, ResponseCode.CLIENT_HAS_NO_FARM_WITH_USER_ID.toString());
+
+        }
+        else {
+            return Utils.OK;
+        }
+
+    }
+
+
+
 }

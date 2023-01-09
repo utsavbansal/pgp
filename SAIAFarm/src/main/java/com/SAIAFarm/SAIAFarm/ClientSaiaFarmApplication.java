@@ -7,6 +7,7 @@ import com.SAIAFarm.SAIAFarm.Utils.AppProperties;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import org.json.JSONArray;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 //import org.wololo.geojson.Geometry;
 
@@ -501,6 +502,38 @@ public class ClientSaiaFarmApplication {
 			return msqlData;
 		}}
 
+	public List<SaiaFarmData> ETCheckFarmDataExist(String userId, String farmName) throws SQLException, ClassNotFoundException {
+
+		boolean connectionValue = this.sqlconn();
+		if(!connectionValue){
+			System.out.println("Exception: not connected properly");
+			return null;
+		}
+		else {
+
+
+			//resultSet = statement.executeQuery("select head_name, gender, son_wife_daughter, literacy, village, address_landmark, farmer_address_coordinates from sai.saia_farmers");
+			//resultSet = statement.executeQuery("select * from sai.saia_farmers");
+			//String query = "select user_id, farm_name, farm_size, farm_type, farmsizecategory, farmer_id, ST_AsText(farm_coordinates) from sai.agri_farm WHERE farmer_id =+userId";
+			String query = "select user_id, farm_name, type,farm_id,farm_size, farm_type, farmsizecategory, address, date_created, date_modified,farmer_id, ST_AsText(farm_coordinates) from sai.agri_farm WHERE user_id ='" + userId + "' AND farm_name='" + farmName + "'";
+
+			//resultSet = statement.executeQuery("select user_id, farm_name, farm_size, farm_type, farmsizecategory, farmer_id, ST_AsText(farm_coordinates) from sai.agri_farm WHERE farmer_id ="+farmer_id);
+			resultSet = statement.executeQuery(query);
+
+
+
+
+			//resultSet = statement.executeQuery("select * from sai.saia_farmers");
+
+			List<SaiaFarmData> msqlData = farmwriteResultSet(resultSet);
+			//System.out.println("check point 3 all");
+
+
+			//ArrayList<Comment> comment= new ArrayList<>();
+
+			return msqlData;
+		}}
+
 
 	public List<SaiaFarmData> SingleFarmData(int farm_id) throws SQLException, ClassNotFoundException, ParseException {
 
@@ -520,20 +553,73 @@ public class ClientSaiaFarmApplication {
 			return msqlData;
 		}}
 
-	/*public List<SaiaiParcelData> CheckParcelDataDuplicate(String user_id) throws SQLException, ClassNotFoundException {
+	public List<SaiaFarmData> FarmerFarmsData(String  userId) throws SQLException, ClassNotFoundException, ParseException {
+
+
+		boolean connectionValue = this.sqlconn();
+		if(!connectionValue){
+			System.out.println("Exception: not connected properly");
+			return null;
+		}
+		else {
+			String query = "select user_id, farm_id, farmer_id, type, farm_name, farmsizecategory, farm_type, farm_size, address, ST_AsText(farm_coordinates), date_created, date_modified from sai.agri_farm WHERE user_id ='"+userId+"';";
+			resultSet = statement.executeQuery(query);
+
+			List<SaiaFarmData> msqlData = farmwriteResultSet(resultSet);
+			System.out.println("checking for farm data------------------"+msqlData);
+			return msqlData;
+		}}
+
+	public List<SaiaiParcelData> CheckParcelDataDuplicate(String userId, String parcelName) throws SQLException, ClassNotFoundException {
 		boolean connectionValue = this.sqlconn();
 		if (!connectionValue) {
 			System.out.println("Exception: not connected properly");
 			return null;
 		} else {
 			System.out.println("check2 client parcel");
-			String query = "select parcel_id, user_id, farm_id, type, ST_AsText(location), area, category, related_source, belongs_to, has_agri_crop, has_agri_soil, last_planted_at, water_stressmean from sai.agri_parcel WHERE user_id ="+user_id;
+			//String query = "select parcel_id, user_id, farm_id, type, ST_AsText(location), area, category, related_source, belongs_to, has_agri_crop, has_agri_soil, last_planted_at, water_stressmean, parcel_name from sai.agri_parcel WHERE user_id ="+user_id;
+			String query = "select parcel_id, user_id, farm_id, type, ST_AsText(location), area, category, related_source, belongs_to, has_agri_crop, has_agri_soil, last_planted_at, date_created, date_modified,water_stressmean, parcel_name from sai.agri_parcel WHERE user_id ='" + userId + "' AND parcel_name='" + parcelName + "'";
 			System.out.println("check3 client parcel");
 			this.resultSet = this.statement.executeQuery(query);
 			List<SaiaiParcelData> msqlData = this.parcelwriteResultSet(this.resultSet);
 			return msqlData;
 		}
-	}*/
+	}
+
+	public List<SaiaiParcelData> ETCheckParcelDataExist(String userId, String parcelName) throws SQLException, ClassNotFoundException {
+
+		boolean connectionValue = this.sqlconn();
+		if(!connectionValue){
+			System.out.println("Exception: not connected properly");
+			return null;
+		}
+		else {
+
+
+			//resultSet = statement.executeQuery("select head_name, gender, son_wife_daughter, literacy, village, address_landmark, farmer_address_coordinates from sai.saia_farmers");
+			//resultSet = statement.executeQuery("select * from sai.saia_farmers");
+			//String query = "select user_id, farm_name, farm_size, farm_type, farmsizecategory, farmer_id, ST_AsText(farm_coordinates) from sai.agri_farm WHERE farmer_id =+userId";
+			String query = "select user_id, parcel_name, type,parcel_id,  area, category, related_source, belongs_to, has_agri_crop, has_agri_soil,last_planted_at, water_stressmean, date_created, date_modified,farm_id, ST_AsText(location) from sai.agri_parcel WHERE user_id ='" + userId + "' AND parcel_name='" + parcelName + "'";
+			//String query = "select user_id, farm_name, type,farm_id,farm_size, farm_type, farmsizecategory, address, date_created, date_modified,farmer_id, ST_AsText(farm_coordinates) from sai.agri_farm WHERE user_id ='" + userId + "' AND farm_name='" + farmName + "'";
+
+
+			//resultSet = statement.executeQuery("select user_id, farm_name, farm_size, farm_type, farmsizecategory, farmer_id, ST_AsText(farm_coordinates) from sai.agri_farm WHERE farmer_id ="+farmer_id);
+			resultSet = statement.executeQuery(query);
+
+
+
+
+			//resultSet = statement.executeQuery("select * from sai.saia_farmers");
+
+			List<SaiaiParcelData> msqlData = parcelwriteResultSet(resultSet);
+			//System.out.println("check point 3 all");
+
+
+			//ArrayList<Comment> comment= new ArrayList<>();
+
+			return msqlData;
+		}}
+
 
 	public List<SaiaiParcelData> SingleParcelData(int parcelId) throws SQLException, ClassNotFoundException, ParseException {
 		boolean connectionValue = this.sqlconn();
@@ -541,7 +627,7 @@ public class ClientSaiaFarmApplication {
 			System.out.println("Exception: not connected properly");
 			return null;
 		} else {
-			String query = "select parcel_id, user_id, farm_id, type, ST_AsText(location), area, category, related_source, belongs_to, has_agri_crop, has_agri_soil, last_planted_at, date_created, date_modified, water_stressmean from sai.agri_parcel WHERE parcel_id =" + parcelId;
+			String query = "select parcel_id, user_id, farm_id, type, ST_AsText(location), area, category, related_source, belongs_to, has_agri_crop, has_agri_soil, last_planted_at, date_created, date_modified, water_stressmean, parcel_name from sai.agri_parcel WHERE parcel_id =" + parcelId;
 			this.resultSet = this.statement.executeQuery(query);
 
 			List<SaiaiParcelData> msqlData = this.parcelwriteResultSet(this.resultSet);
@@ -571,11 +657,15 @@ public class ClientSaiaFarmApplication {
 			String date_created = resultSet.getString("date_created");
 			String date_modified = resultSet.getString("date_modified");
 			String waterStressmean = resultSet.getString("water_stressmean");
+			String parcelName = resultSet.getString("parcel_name");
 			System.out.println("client side check4");
 			//list.add(farm_name);
 
+			/*SaiaiParcelData cData = new SaiaiParcelData(resultSet.getString("parcel_id"), resultSet.getString("user_id"), resultSet.getString("farm_id"),resultSet.getString("type"), location, resultSet.getString("area"), resultSet.getString("category"), resultSet.getString("related_source"), resultSet.getString("belongs_to"),
+					 resultSet.getString("has_agri_crop"), resultSet.getString("has_agri_soil"), resultSet.getString("last_planted_at"), resultSet.getString("date_created"), resultSet.getString("date_modified"), resultSet.getString("water_stressmean"));*/
+
 			SaiaiParcelData cData = new SaiaiParcelData(resultSet.getString("parcel_id"), resultSet.getString("user_id"), resultSet.getString("farm_id"),resultSet.getString("type"), location, resultSet.getString("area"), resultSet.getString("category"), resultSet.getString("related_source"), resultSet.getString("belongs_to"),
-					 resultSet.getString("has_agri_crop"), resultSet.getString("has_agri_soil"), resultSet.getString("last_planted_at"), resultSet.getString("date_created"), resultSet.getString("date_modified"), resultSet.getString("water_stressmean"));
+					resultSet.getString("has_agri_crop"), resultSet.getString("has_agri_soil"), resultSet.getString("last_planted_at"), resultSet.getString("date_created"), resultSet.getString("date_modified"), resultSet.getString("water_stressmean"), resultSet.getString("parcel_name"));
 			System.out.println("client side check5");
 
 			parcelData.add(cData);
@@ -595,13 +685,13 @@ public class ClientSaiaFarmApplication {
 
 	}
 
-	public SaiaiParcelData parcelPostIntoDataBase(String userId, String farm_id, String location, String area, String category, String relatedSource, String belongsTo, String hasAgriCrop, String hasAgriSoil, String lastPlantedAt, String waterStressmean) throws SQLException {
+	public SaiaiParcelData parcelPostIntoDataBase(String userId, String farm_id, String location, String area, String category, String relatedSource, String belongsTo, String hasAgriCrop, String hasAgriSoil, String lastPlantedAt, String waterStressmean, String parcelName) throws SQLException {
 		boolean connectionValue = this.sqlconn();
 		if (!connectionValue) {
 			System.out.println("Exception: not connected properly");
 			return null;
 		} else {
-			this.preparedStatement = this.connect.prepareStatement("insert into  sai.agri_parcel (user_id, farm_id, location, area, category, related_source, belongs_to, has_agri_crop, has_agri_soil, last_planted_at, water_stressmean) VALUES (?, ?, ST_GeomFromGeoJSON(?),? , ?, ?,  ?, ?, ?, ?,?)");
+			this.preparedStatement = this.connect.prepareStatement("insert into  sai.agri_parcel (user_id, farm_id, location, area, category, related_source, belongs_to, has_agri_crop, has_agri_soil, last_planted_at, water_stressmean, parcel_name) VALUES (?, ?, ST_GeomFromGeoJSON(?),? , ?, ?,  ?, ?, ?, ?,?,?)");
 			//System.out.println("farmer_id," + farmer_id + "farmsizecategory," + farmsizecategory + " farm_name " + farm_name + " farm_type " + farm_type + " farm_size " + farm_size + " farm_coordinates " + farm_coordinates + " address " + address);
 			this.preparedStatement.setString(1, userId);
 			this.preparedStatement.setString(2, farm_id);
@@ -614,8 +704,9 @@ public class ClientSaiaFarmApplication {
 			this.preparedStatement.setString(9, hasAgriSoil);
 			this.preparedStatement.setString(10, lastPlantedAt);
 			this.preparedStatement.setString(11, waterStressmean);
+			this.preparedStatement.setString(12, parcelName);
 			this.preparedStatement.executeUpdate();
-			SaiaiParcelData parcelPostData = new SaiaiParcelData(userId, farm_id, location, area, category, relatedSource, belongsTo, hasAgriCrop, hasAgriSoil, lastPlantedAt, waterStressmean);
+			SaiaiParcelData parcelPostData = new SaiaiParcelData(userId, farm_id, location, area, category, relatedSource, belongsTo, hasAgriCrop, hasAgriSoil, lastPlantedAt, waterStressmean, parcelName);
 			return parcelPostData;
 		}
 	}
@@ -626,14 +717,14 @@ public class ClientSaiaFarmApplication {
 			System.out.println("Exception: not connected properly");
 			return null;
 		} else {
-			this.resultSet = this.statement.executeQuery("select parcel_id, user_id, farm_id, type, ST_AsText(location), area, category, related_source, belongs_to, has_agri_crop, has_agri_soil, last_planted_at, date_created, date_modified, water_stressmean from sai.agri_parcel");
+			this.resultSet = this.statement.executeQuery("select parcel_id, user_id, farm_id, type, ST_AsText(location), area, category, related_source, belongs_to, has_agri_crop, has_agri_soil, last_planted_at, date_created, date_modified, water_stressmean, parcel_name from sai.agri_parcel");
 			new ArrayList();
 			List<SaiaiParcelData> retSariParcel = this.parcelwriteResultSet(this.resultSet);
 			return retSariParcel;
 		}
 	}
-///commented below to check duplicate farmer in farmer table
-	/*public List<SaiaFarmerData> CheckDupFarmer(String user_id) throws SQLException, ClassNotFoundException, ParseException {
+///below to check duplicate farmer in farmer table
+	public List<SaiaFarmerData> CheckDupFarmer(String user_id) throws SQLException, ClassNotFoundException, ParseException {
 
 		boolean connectionValue = this.sqlconn();
 		if(!connectionValue){
@@ -643,12 +734,140 @@ public class ClientSaiaFarmApplication {
 		else {
 
 			//String query = "select farmer_id, type, head_name, gender, son_wife_daughter, literacy, address, ST_AsText(farmer_address_coordinates), date_created, date_modified from sai.saia_farmers WHERE farmer_id ="+farmer_id;
-			String query = "select farmer_id, type, head_name, gender, son_wife_daughter, literacy, address, ST_AsText(farmer_address_coordinates), date_created, date_modified from sai.saia_farmers WHERE user_id = +user_id";
+			//String query = "select farmer_id, type, head_name, gender, son_wife_daughter, literacy, address, ST_AsText(farmer_address_coordinates), date_created, date_modified from sai.saia_farmers WHERE user_id = +user_id";
+			String query = "select farmer_id, user_id, type, head_name, gender, son_wife_daughter, literacy, address, ST_AsText(farmer_address_coordinates), date_created, date_modified from sai.saia_farmers WHERE user_id ='"+user_id+"';";
 			resultSet = statement.executeQuery(query);
 
 			List<SaiaFarmerData> msqlData = writeResultSet(resultSet);
 			return msqlData;
-		}}*/
+		}}
+
+
+	public List<SaiaFarmData> ETFarmsData(String  farmName) throws SQLException, ClassNotFoundException, ParseException {
+
+
+
+		boolean connectionValue = this.sqlconn();
+		if(!connectionValue){
+			System.out.println("Exception: not connected properly");
+			return null;
+		}
+		else {
+			//List<Float> coord;
+			String query = "select farm_name, ST_AsText(farm_coordinates) from sai.agri_farm WHERE farm_name ='"+farmName+"';";
+			resultSet = statement.executeQuery(query);
+
+
+			List<SaiaFarmData> msqlData = etfarmwriteResultSet(resultSet);
+
+			System.out.println("CHECKING FOR FARM ET data------------------"+msqlData);
+			/*String coor = msqlData.get(0).getFarm_coordinates();
+			System.out.println("coordinates: "+coor);
+			String coord=coor.replaceAll("[^a-zA-Z0-9,.) ]","");
+			String coordi=coord.replace("POLYGON","[");
+			String coordin=coordi.replaceFirst("[)]","]");
+			String coordina=coordin.replace(")","");
+			String coordinate=coordina.replace(" ",", ");
+
+			//String coordi=coord.replaceAll("[)]","]");
+			System.out.println("Desired coordinates"+coordinate);*/
+
+
+
+			//for (int i =0;i<msqlData.toArray().length;i=i+1)
+			return msqlData;
+
+		}
+	}
+
+	private List<SaiaFarmData> etfarmwriteResultSet(ResultSet resultSet) throws SQLException {
+		// ResultSet is initially before the first data set
+		List<String> list = new ArrayList<String>();
+		List<SaiaFarmData> farmData = new ArrayList<>();
+		boolean isFarmsExist = false;
+		while (resultSet.next()) {
+
+			String farm_name = resultSet.getString("farm_name");
+
+			String farm_coordinates = resultSet.getString("ST_AsText(farm_coordinates)");
+
+			SaiaFarmData cData = new SaiaFarmData(farm_coordinates, resultSet.getString("farm_name"));
+
+
+			farmData.add(cData);
+
+
+
+		}
+		int size = list.size();
+		if(size >=1)
+		{
+			isFarmsExist = true;
+			System.out.println("eixit farm name: "+list);
+
+		}
+		System.out.println("is farm already exist: "+isFarmsExist);
+		return farmData;
+
+	}
+
+	public List<SaiaiParcelData> ETParcelData(String  parcelName) throws SQLException, ClassNotFoundException, ParseException {
+
+
+
+		boolean connectionValue = this.sqlconn();
+		if(!connectionValue){
+			System.out.println("Exception: not connected properly");
+			return null;
+		}
+		else {
+			//List<Float> coord;
+			String query = "select parcel_name, ST_AsText(location) from sai.agri_parcel WHERE parcel_name ='"+parcelName+"';";
+			resultSet = statement.executeQuery(query);
+
+
+			List<SaiaiParcelData> msqlData = etparcelwriteResultSet(resultSet);
+
+			System.out.println("CHECKING FOR PARCEL ET data------------------"+msqlData);
+
+			return msqlData;
+
+		}
+	}
+
+	private List<SaiaiParcelData> etparcelwriteResultSet(ResultSet resultSet) throws SQLException {
+		// ResultSet is initially before the first data set
+		List<String> list = new ArrayList<String>();
+		List<SaiaiParcelData> parcelData = new ArrayList<>();
+		boolean isParcelExist = false;
+		while (resultSet.next()) {
+
+			String parcelName = resultSet.getString("parcel_name");
+
+			String location = resultSet.getString("ST_AsText(location)");
+
+			SaiaiParcelData cData = new SaiaiParcelData(location, resultSet.getString("parcel_name"));
+			//SaiaiParcelData cData = new SaiaiParcelData(location, resultSet.getString("farm_name"));
+
+
+			parcelData.add(cData);
+
+
+
+		}
+		int size = list.size();
+		if(size >=1)
+		{
+			isParcelExist = true;
+			System.out.println("eixit parcel name: "+list);
+
+		}
+		System.out.println("is parcel already exist: "+isParcelExist);
+		return parcelData;
+
+	}
+
+
 
 
 	private void close() {

@@ -44,6 +44,8 @@ public class ResponseData {
     }
 
 
+
+
     public String getReqId() {
         return reqId;
     }

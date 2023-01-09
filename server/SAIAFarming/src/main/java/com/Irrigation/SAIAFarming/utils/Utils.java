@@ -14,6 +14,7 @@ public final class Utils {
     public static final int USERID_NOT_EXISTING = 2;
     public static final int USERID_FARM_NAME_DUPLICATE = 3;
     public static final int OK = 1;
+
     private static ClientSaiaFarmApplication saiafarmAPI = ClientSaiaFarmApplication.getInstance();
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private Date validateDateParam(String datestr) {

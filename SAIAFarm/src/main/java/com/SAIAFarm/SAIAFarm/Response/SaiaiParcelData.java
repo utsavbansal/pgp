@@ -16,8 +16,9 @@ public class SaiaiParcelData {
     String date_created;
     String date_modified;
     String  waterStressmean;
+    String parcelName;
 
-    public SaiaiParcelData(String parcelId, String userId, String farm_id, String type, String location, String area, String category, String relatedSource, String belongsTo, String hasAgriCrop, String hasAgriSoil, String lastPlantedAt, String date_created, String date_modified, String waterStressmean) {
+    public SaiaiParcelData(String parcelId, String userId, String farm_id, String type, String location, String area, String category, String relatedSource, String belongsTo, String hasAgriCrop, String hasAgriSoil, String lastPlantedAt, String date_created, String date_modified, String waterStressmean, String parcelName) {
         this.parcelId =parcelId;
         this.userId = userId;
         this.farm_id = farm_id;
@@ -33,8 +34,9 @@ public class SaiaiParcelData {
         this.date_created = date_created;
         this.date_modified = date_modified;
         this.waterStressmean = waterStressmean;
+        this.parcelName = parcelName;
     }
-    public SaiaiParcelData(String userId, String farm_id, String location, String area, String category, String relatedSource, String belongsTo, String hasAgriCrop, String hasAgriSoil, String lastPlantedAt, String waterStressmean) {
+    public SaiaiParcelData(String userId, String farm_id, String location, String area, String category, String relatedSource, String belongsTo, String hasAgriCrop, String hasAgriSoil, String lastPlantedAt, String waterStressmean, String parcelName) {
         this.userId = userId;
         this.farm_id = farm_id;
         this.location = location;
@@ -46,6 +48,7 @@ public class SaiaiParcelData {
         this.hasAgriSoil = hasAgriSoil;
         this.lastPlantedAt = lastPlantedAt;
         this.waterStressmean = waterStressmean;
+        this.parcelName = parcelName;
 
     }
     public String getParcelId() { return parcelId; }
@@ -146,5 +149,20 @@ public class SaiaiParcelData {
 
     public void setWaterStressmean(String waterStressmean) {
         this.waterStressmean = waterStressmean;
+    }
+
+    public String getParcelName() {
+        return parcelName;
+    }
+
+    public void setParcelName(String parcelName) {
+        this.parcelName = parcelName;
+    }
+
+    public SaiaiParcelData(String location, String parcelName) {
+
+        this.location = location;
+        this.parcelName = parcelName;
+
     }
 }
