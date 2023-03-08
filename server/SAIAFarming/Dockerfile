@@ -1,23 +1,24 @@
 From openjdk:8
 copy ./target/SAIAFarming-0.0.1-SNAPSHOT.jar SAIAFarming-0.0.1-SNAPSHOT.jar
-CMD ["java","-Dspring.config.location=/opt/application.properties","-jar","SAIAFarming-0.0.1-SNAPSHOT.jar"]
+copy ./src/main/resources/application.properties ./opt/application.properties
+CMD ["java","-Dspring.config.location=./opt/application.properties","-jar","SAIAFarming-0.0.1-SNAPSHOT.jar"]
 
 # start by pulling the python image
-FROM python:3.6-alpine
+#FROM python:3.6-alpine
 
 # copy the requirements file into the image
-COPY ./requirements.txt /app/requirements.txt
+#COPY ./requirements.txt /app/requirements.txt
 
 # switch working directory
-WORKDIR /app
+#WORKDIR /app
 
 # install the dependencies and packages in the requirements file
-RUN pip install -r requirements.txt
+#RUN pip install -r requirements.txt
 
 # copy every content from the local file to the image
-COPY . /app
+#COPY . /app
 
 # configure the container to run in an executed manner
-ENTRYPOINT [ "python" ]
+#ENTRYPOINT [ "python" ]
 
-CMD ["main.py" ]
+#CMD ["main.py" ]
