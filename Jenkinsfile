@@ -17,7 +17,7 @@ pipeline {
        stage('Docker Build and Tag') {
            steps {
               dir('server/SAIAFarming') {
-                sh 'docker build -t spring-SAIAFarming .'
+                sh 'docker build -t springboot-saiafarming .'
                 sh 'docker docker compose up' 
               //  sh 'docker tag samplewebapp utsavbansal/samplewebapp:latest'
                 //sh 'docker tag samplewebapp nikhilnidhi/samplewebapp:$BUILD_NUMBER'
