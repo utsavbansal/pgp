@@ -18,7 +18,7 @@ pipeline {
            steps {
               dir('server/SAIAFarming') {
                 sh 'docker build -t springboot-saiafarming .'
-                sh 'docker compose up' 
+              //  sh 'docker compose up' 
               //  sh 'docker tag samplewebapp utsavbansal/samplewebapp:latest'
                 //sh 'docker tag samplewebapp nikhilnidhi/samplewebapp:$BUILD_NUMBER'
                 }
