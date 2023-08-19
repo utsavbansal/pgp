@@ -9,7 +9,7 @@ the above command will automatically download the dependencies that are required
 Note1: In line 7 of "docker-compose.yml" please change the path according to your directory structure i.e "/home/farmerzone/SAIAfarming:/opt" will be like "/path_acc_to_your_directory_structure_where_the_application.properties_file_is_present:opt".[for Docker compose "application.properties" file is provided in seperate folder/directory i.e alongside "server" and "SAIAFarm" repositories.]
 
 Note2: In line 22 of "docker-compose.yml" please change the path where you want to store data of mysql[this is the path where all the metadata and your data will be stored(this is important because if you dont use this path then when you will close the container by using "docker compose down" command then you will lost all the data you had stores by using API's)]. This path will be like this: /home/farmerzone/Desktop/Docker_compose_db:/var/lib/mysql  to this /path_where_you_want_to_store_meta_data_&_data/Docker_compose_db:/var/lib/mysql.
-dfdf
+dfdfsdasdd
 Note3: To use the docker in IIT proxy network or other proxy network please first set the proxy. No need to set the proxy if you are using your personal internet connection.
 For IIT Network follow the Steps mentioned below:
  
