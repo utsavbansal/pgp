@@ -1,5 +1,6 @@
 package com.Irrigation.SAIAFarming.controller;
 
+import com.Irrigation.SAIAFarming.dto.ParcelDTO;
 import com.Irrigation.SAIAFarming.entity.FarmDatabase;
 import com.Irrigation.SAIAFarming.entity.ParcelDatabase;
 import com.Irrigation.SAIAFarming.entity.usermanagement.UserRegistration;
@@ -14,22 +15,21 @@ import com.SAIAFarm.SAIAFarm.ClientSaiaFarmApplication;
 //import com.SAIAFarm.SAIAFarm.Response.SaiaFarmData;
 import com.SAIAFarm.SAIAFarm.Response.SaiaFarmData;
 import com.SAIAFarm.SAIAFarm.Response.SaiaiParcelData;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.wololo.geojson.Feature;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.aspectj.util.LangUtil.isEmpty;
@@ -54,7 +54,7 @@ public class ParcelController extends BaseController{
 
         List<Feature> featureListReturned = new ArrayList<>();
         RequestContext.clear();
-        SaiaiParcelData parcelData = null;
+     //   SaiaiParcelData parcelData = null;
         LinkedHashMap<String, Object> retData = new LinkedHashMap<>();
 
         for (Feature feature : featureList) {
@@ -139,8 +139,10 @@ public class ParcelController extends BaseController{
             if(userIdParcelNameCheck== Utils.OK){
                 ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
 //SaiaiParcelData parcelPostIntoDataBase(String userId, String farm_id, String location, String area, String category, String relatedSource, String belongsTo, String hasAgriCrop, String hasAgriSoil, String lastPlantedAt, String waterStressmean)
+                List<SaiaiParcelData> parcelData;
                 parcelData = dao.parcelPostIntoDataBase(userId,farmId, coordinates,area,category,String.valueOf(relatedSource),belongsTo,hasAgriCrop,hasAgriSoil,lastPlantedAt,waterStressmean,parcelName);
                 retData.put("data", parcelData);
+
             //}
 
 
@@ -148,8 +150,6 @@ public class ParcelController extends BaseController{
 
         ResponseData resData = new ResponseData(reqID, ResponseCode.SUCCESS.getCode(), Response.Status.OK.getStatusCode(), retData);
         return resData;
-
-
     }
 
 
@@ -182,7 +182,7 @@ public class ParcelController extends BaseController{
             logger.warn("Invalid request param `parcelId`: " + parcelId);
             //throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_FARM_ID);
         }
-        HashMap<String, Object> retData =new LinkedHashMap<>();
+
 
         ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
 
@@ -193,7 +193,7 @@ public class ParcelController extends BaseController{
 //        }
 
         //Here we have to filter the data (use only desired fields)
-
+        HashMap<String, Object> retData =new LinkedHashMap<>();
         retData.put("parcel_info", parcelInfo.get(0));
         RequestContext.clear();//clear the thread before return
 
@@ -201,18 +201,241 @@ public class ParcelController extends BaseController{
 
         return responseData;
     }
+/*
+    @GetMapping("/parceldatauid")
 
+    public ResponseData getparceluid(@QueryParam(value = "userId") String userId) throws SQLException, ClassNotFoundException, ParseException {
+        RequestContext.clear(); //clear pre-existing data
+        // generating UUID for this new request
+        final String reqID = UUID.randomUUID().toString();
+        // update RequestContext for tracking with reqID
+        RequestContext.add("reqID", reqID);
+        System.out.println("asas");
+        if(isEmpty(String.valueOf(userId))){
+            logger.warn("Invalid request param `userId`: " + userId);
+            System.out.println("UserId is empty returning all Parcel data");
+            ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
+            //dao.readDataBase();
+            List<SaiaiParcelData> parcelData =  dao.ParcelData();
+            //String something = new String(String.valueOf(dao.FarmData()));
+            //String something = new String(String.valueOf(dao.Comment()));
+            //return parcelData;
+            //throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_FARM_ID);
+
+            System.out.println(parcelData);
+//        for(SaiaiParcelData oneSingleParcel: parcelInfo){
+//            retSaiparcelData.add(oneSingleParcel);
+//        }
+
+            //Here we have to filter the data (use only desired fields)
+            HashMap<String, Object> retData =new LinkedHashMap<>();
+            retData.put("parcel_info", parcelData.get(0));
+            RequestContext.clear();//clear the thread before return
+
+            ResponseData responseData = new ResponseData(reqID, Response.Status.OK.getStatusCode(), ResponseCode.SUCCESS.getCode(), retData);
+
+            return responseData;
+
+
+        }
+        HashMap<String, Object> retData =new LinkedHashMap<>();
+
+        ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
+
+        List<SaiaiParcelData> parcelInfo = dao.SingleParcelData_uid(userId);
+        System.out.println(parcelInfo);
+//        for(SaiaiParcelData oneSingleParcel: parcelInfo){
+//            retSaiparcelData.add(oneSingleParcel);
+//        }
+
+        //Here we have to filter the data (use only desired fields)
+        if(parcelInfo.size()!=0)
+            retData.put("parcel_info", parcelInfo.get(0));
+        else
+            System.out.println("Invalid User ID");
+        RequestContext.clear();//clear the thread before return
+
+        ResponseData responseData = new ResponseData(reqID, Response.Status.OK.getStatusCode(), ResponseCode.SUCCESS.getCode(), retData);
+
+        return responseData;
+    }
+
+*/
     @GetMapping("/get_parcelsdata")
-    public List<SaiaiParcelData> StringData() throws Exception {
+    public List<SaiaiParcelData> StringData(@QueryParam(value = "userId") String userId ) throws Exception {
+        RequestContext.clear(); //clear pre-existing data
+        // generating UUID for this new request
+        final String reqID = UUID.randomUUID().toString();
+        // update RequestContext for tracking with reqID
+        RequestContext.add("reqID", reqID);
+        System.out.println("asas");
+        if(isEmpty(String.valueOf(userId)) || userId==null){
+            logger.warn("Invalid request param `userId`: " + userId);
+            System.out.println("UserId is empty returning all Parcel data");
+            ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
+            //dao.readDataBase();
+            List<SaiaiParcelData> parcelData =  dao.ParcelData();
+            //String something = new String(String.valueOf(dao.FarmData()));
+            //String something = new String(String.valueOf(dao.Comment()));
+            //return parcelData;
+            //throwBadRequestException(ResponseCode.CLIENT_INVALID_REQ_PARAM_FARM_ID);
 
+            System.out.println(parcelData);
+//        for(SaiaiParcelData oneSingleParcel: parcelInfo){
+//            retSaiparcelData.add(oneSingleParcel);
+//        }
+            /*
+            //Here we have to filter the data (use only desired fields)
+            HashMap<String, Object> retData =new LinkedHashMap<>();
+            retData.put("parcel_info", parcelData.get(0));
+            RequestContext.clear();//clear the thread before return
+
+            ResponseData responseData = new ResponseData(reqID, Response.Status.OK.getStatusCode(), ResponseCode.SUCCESS.getCode(), retData);
+
+            return responseData;
+            */
+            return parcelData;
+
+        }
+        HashMap<String, Object> retData =new LinkedHashMap<>();
+
+        ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
+
+        List<SaiaiParcelData> parcelInfo = dao.SingleParcelData_uid(userId);
+        System.out.println(parcelInfo);
+//        for(SaiaiParcelData oneSingleParcel: parcelInfo){
+//            retSaiparcelData.add(oneSingleParcel);
+//        }
+
+        //Here we have to filter the data (use only desired fields)
+        if(parcelInfo.size()!=0)
+           // retData.put("parcel_info", parcelInfo.get(0));
+            return parcelInfo;
+        else
+            System.out.println("Invalid User ID");
+        /*
+        RequestContext.clear();//clear the thread before return
+
+        ResponseData responseData = new ResponseData(reqID, Response.Status.OK.getStatusCode(), ResponseCode.SUCCESS.getCode(), retData);
+
+        return responseData;
         System.out.println("I am here for farm data");
         ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
         //dao.readDataBase();
-        List<SaiaiParcelData> parcelData =  dao.ParcelData();
-        //String something = new String(String.valueOf(dao.FarmData()));
+         //String something = new String(String.valueOf(dao.FarmData()));
         //String something = new String(String.valueOf(dao.Comment()));
         return parcelData;
+          */
+        return parcelInfo;
+    }
 
+    @PostMapping("/update_parcel")
+    public ResponseData updateParcel(@RequestBody ParcelDTO parcelInfo) throws SQLException, ParseException, ClassNotFoundException, java.text.ParseException {
+        final String reqID = UUID.randomUUID().toString();
+        // update RequestContext for tracking with reqID
+        RequestContext.add("reqID", reqID);
+        Integer parcelId = parcelInfo.getParcelId();
+
+        String category = parcelInfo.getCategory();
+
+        String hasAgriCrop=parcelInfo.getHasAgriCrop();
+        String lastPlantedAt=parcelInfo.getLastPlantedAt();
+        String parcelName=parcelInfo.getParcelName();
+        //  String getLocation;
+
+
+        if (logger.isInfoEnabled())
+            logger.info("ParcelInfo data: " + parcelInfo);
+
+
+
+        ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
+
+        List<SaiaiParcelData> parcelDB = dao.SingleParcelData(parcelInfo.getParcelId());
+       // lastPlantedAt=parcelDB.get(0).getLastPlantedAt();
+       // getLocation=parcelinfo.get(0).getLocation();
+        System.out.println(parcelInfo);
+//        for(SaiaiParcelData oneSingleParcel: parcelInfo){
+//            retSaiparcelData.add(oneSingleParcel);
+//        }
+
+
+        //retData.put("parcel_info", parcelInfo.get(0));
+        RequestContext.clear();//clear the thread before return
+
+        //  ResponseData responseData = new ResponseData(reqID, Response.Status.OK.getStatusCode(), ResponseCode.SUCCESS.getCode(), retData);
+
+        //return responseData;
+        if (parcelId==null) {
+            logger.warn("Invalid request param `Parcel ID`: " + parcelId);
+            throw new CustomApplicationException(HttpStatus.BAD_REQUEST, ResponseCode.CLIENT_INVALID_REQ_PARAM_USER_NAME.toString());
+
+        }
+
+
+
+
+        if (isEmpty(parcelInfo.getCategory())) {
+            category=parcelDB.get(0).getCategory();
+        }
+
+        if (isEmpty(parcelInfo.getHasAgriCrop())) {
+            hasAgriCrop=parcelDB.get(0).getHasAgriCrop();
+        }
+       if (lastPlantedAt==null) {
+            lastPlantedAt=parcelDB.get(0).getLastPlantedAt();
+
+        }
+//        if (getLocation==null) {
+//            getLocation=parcelinfo.get(0).getLocation();
+//        }
+
+        if (isEmpty(parcelName)) {
+            parcelName=parcelDB.get(0).getParcelName();
+
+        }
+
+        List<SaiaiParcelData> parcelData = dao.parcelUpdateDB(parcelId,category,hasAgriCrop,lastPlantedAt,parcelName);
+        System.out.println(parcelData);
+
+        HashMap<String, Object> retData =new LinkedHashMap<>();
+        retData.put("parcel_info", parcelData.get(0));
+        RequestContext.clear();//clear the thread before return
+
+        ResponseData responseData = new ResponseData(reqID, Response.Status.OK.getStatusCode(), ResponseCode.SUCCESS.getCode(), retData);
+
+        return responseData;
+
+    }
+    @DeleteMapping("/delete_parcel")
+    public ResponseData deleteParcel(@RequestParam(value = "parcelId") Integer parcelID) throws Exception {
+        RequestContext.clear(); //clear pre-existing data
+        // generating UUID for this new request
+        final String reqID = UUID.randomUUID().toString();
+        // update RequestContext for tracking with reqID
+        RequestContext.add("reqID", reqID);
+
+        if(isEmpty(String.valueOf(parcelID))){
+            logger.warn("Invalid request param `userId`: " + parcelID);
+            System.out.println("ParcelName is empty. Please provide a valid parcel name.");
+
+        }
+
+        ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
+
+        List<SaiaiParcelData> parcelInfo = dao.deleteParcel(parcelID);
+        System.out.println(parcelInfo);
+
+
+
+
+        HashMap<String, Object> retData =new LinkedHashMap<>();
+        retData.put("parcel_info", parcelInfo.get(0));
+        RequestContext.clear();//clear the thread before return
+
+        ResponseData responseData = new ResponseData(reqID, Response.Status.OK.getStatusCode(), ResponseCode.SUCCESS.getCode(), retData);
+
+        return responseData;
     }
 
     @PostMapping("/et_parceldata")

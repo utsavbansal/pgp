@@ -87,7 +87,7 @@ public class FarmController extends BaseController {
         //List<FarmDatabase> farmsList = new ArrayList<>();
         List<Feature> featureListReturned = new ArrayList<>();
         RequestContext.clear();
-        SaiaFarmData farmData = null;
+        List<SaiaFarmData> farmData = null;
         LinkedHashMap<String, Object> retData = new LinkedHashMap<>();
 
         for (Feature feature : featureList) {
@@ -152,6 +152,7 @@ public class FarmController extends BaseController {
                     ClientSaiaFarmApplication dao = new ClientSaiaFarmApplication();
 //                    farmData = dao.farmPostIntoDataBase(farmer_id,farmsizecategory, farmName,farm_type,farm_size,coordinates,userId);
                     farmData = dao.farmPostIntoDataBase(farmer_id,farmsizecategory, farmName,farm_type,farm_size,coordinates,userId,String.valueOf(farmaddress));
+                    retData.clear();
                     retData.put("data", farmData);
                 }
 
@@ -171,7 +172,7 @@ public class FarmController extends BaseController {
             FarmDatabase farmInfo = saiaFarmRepository.save(farm);
             logger.info("farm is stored to db: "+farmInfo);
         }*/
-        ResponseData resData = new ResponseData(reqID, ResponseCode.SUCCESS.getCode(), Response.Status.OK.getStatusCode(), retData);
+        ResponseData resData = new ResponseData(reqID, ResponseCode.SUCCESS.getCode(), Response.Status.OK.getStatusCode(),retData );
         return resData;
 
 
