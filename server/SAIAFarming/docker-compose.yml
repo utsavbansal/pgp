@@ -1,45 +1,70 @@
-version: '3'
+version: "3"
 services:
   springboot-app:
     container_name: spring-SAIAFarming
     image: springboot-saiafarming
     volumes:
-      - "/home/utsav/Desktop/demo/saiafarm.API.code:/opt"
+      - "/home/farmerzone/SAIAfarming:/opt"
     restart: always
     build: .
     ports:
-      - '9099:9099'
+      - 9099:9099
 
     environment:
-      MYSQL_HOST: 'mysqldb'
-      MYSQL_USER: 'root'
-      MYSQL_PASSWORD: 'Uv#1996!'
-      MYSQL_PORT: '3306'
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 12345678
+      MYSQL_PORT: 3306
       #mysql.username: root
       #mysql.password: 12345678
-      SPRING_HOST: '9099'
-
-
+      SPRING_HOST: 9099
   mysqldb:
+    container_name: mysqldb
     image: mysql:8
-    restart: always
-    environment:
-      MYSQL_DATABASE: 'sai'
-      # So you don't have to use root, but you can if you like
-      MYSQL_USER: 'utsav'
-      # You can use whatever password you like
-      MYSQL_PASSWORD: 'Uv#1996!'
-      # Password for root access
-      MYSQL_ROOT_PASSWORD: 'Uv#1996!'
-    ports:
-      # <Port exposed> : < MySQL Port running inside container>
-      - '3306:3306'
-    expose:
-      # Opens port 3306 on the container
-      - '3306'
-      # Where our data will be persisted
     volumes:
-      - my-db:/var/lib/mysql
-# Names our volume
-volumes:
-  my-db:
+      - /home/farmerzone/Desktop/Docker_compose_db:/var/lib/mysql
+
+    ports:
+      - 3307:3306
+
+    environment:
+      MYSQL_DATABASE: sai
+      MYSQL_ROOT_PASSWORD: 12345678
+
+  #Second springboot image for external organisation
+#  springboot-app-org:
+#    container_name: spring-SAIAFarming-org
+#    image: springboot-saiafarming
+#    volumes:
+#      - "/home/farmerzone/SAIAfarming/git_directories/saiafarm.API.code/server/SAIAFarming/Docker/Docker_Other_org:/opt"
+#    #restart: always
+#    #build: ./Docker/Docker_Other_org
+#    build:
+#      context: ./Docker/Docker_Other_org
+#      dockerfile: Dockerfile
+#
+#    ports:
+#      - 9090:9090
+#
+#    environment:
+#      MYSQL_HOST: mysqldborg
+#      MYSQL_USER: root
+#      MYSQL_PASSWORD: 12345678
+#      MYSQL_PORT: 3308
+#      mysql.username: root
+#      mysql.password: 12345678
+#      SPRING_HOST: 9090
+#
+#  #Second mysql image for external organisation
+#  mysqldborg:
+#    container_name: mysqldborg
+#    image: mysql:8
+#    volumes:
+#      - /home/farmerzone/Desktop/Docker_compose_db_other_org:/var/lib/mysql
+#
+#    ports:
+#      - 3309:3308
+#
+#    environment:
+#      MYSQL_DATABASE: sai
+#      MYSQL_ROOT_PASSWORD: 12345678

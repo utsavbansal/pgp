@@ -14,6 +14,22 @@ public class SaiaFarmData {
     String date_created;
     String date_modified;
 
+    public String getFarm_id() {
+        return farm_id;
+    }
+
+    public void setFarm_id(String farm_id) {
+        this.farm_id = farm_id;
+    }
+
+    public void setDate_created(String date_created) {
+        this.date_created = date_created;
+    }
+
+    public void setDate_modified(String date_modified) {
+        this.date_modified = date_modified;
+    }
+
     public SaiaFarmData(String farmsizecategory, String farm_name, String farm_coordinates, String farm_type, String farm_size) {
     }
 
