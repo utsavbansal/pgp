@@ -17,10 +17,10 @@ pipeline {
        stage('Docker Build and Tag') {
            steps {
               dir('server/SAIAFarming') {
-              	sh 'docker system prune'
-              	sh 'docker image prune'
-              	sh 'docker container prune'
-                sh 'docker build -t springboot-saiafarming .'
+              	//sh 'docker system prune'
+              	//sh 'docker image prune'
+              	//sh 'docker container prune'
+                //sh 'docker build -t springboot-saiafarming .'
               //  sh 'docker compose up' 
               //  sh 'docker tag samplewebapp utsavbansal/samplewebapp:latest'
                 //sh 'docker tag samplewebapp nikhilnidhi/samplewebapp:$BUILD_NUMBER'
